@@ -21,8 +21,15 @@ fn main() -> glib::ExitCode {
         // SAFETY: environment setup precedes all worker threads.
         unsafe { std::env::set_var("GSK_RENDERER", "ngl") };
     }
+    // NYX_NOTES_APP_ID runs a test copy under its own ID, beside the real one.
+    let id = std::env::var("NYX_NOTES_APP_ID")
+        .ok()
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "io.github.design_nexus.nyx.Notes".to_string());
+    // Windows without an application, like dialogs, take their Wayland app ID from this.
+    gtk::glib::set_prgname(Some(id.as_str()));
     let app = gtk::Application::builder()
-        .application_id("io.github.design_nexus.nyx.Notes")
+        .application_id(id.as_str())
         .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
     app.connect_startup(|app| {
