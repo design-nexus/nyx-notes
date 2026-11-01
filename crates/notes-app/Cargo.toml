@@ -10,6 +10,7 @@ repository.workspace = true
 gtk.workspace = true
 sourceview5.workspace = true
 nyx-core.workspace = true
+nyx-share-client.workspace = true
 nyx-ui.workspace = true
 nyx-theme.workspace = true
 anyhow.workspace = true

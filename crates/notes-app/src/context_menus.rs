@@ -76,6 +76,37 @@ impl Ui {
             display.clipboard().set_text(&path.to_string_lossy());
         }
     }
+    /// Nyx Share's Share Sheet for a note or file. An open note goes as it is in
+    /// the editor, saved or not; nothing is written.
+    fn share(self: &Rc<Self>, target: &Target, path: std::path::PathBuf) {
+        let text = match target {
+            Target::Note(doc) => Some(doc.editor.text()),
+            Target::Path(..) => None,
+        };
+        let weak = Rc::downgrade(self);
+        nyx_core::cmd::background(
+            move || {
+                use nyx_share_client::{Client, Content, ContentKind, ShareOptions};
+                let mut content = Content::new();
+                match text {
+                    Some(text) => {
+                        let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "Note.md".into());
+                        content.bytes(ContentKind::File, &name, Some("text/markdown"), text.as_bytes()).map_err(|e| e.to_string())?;
+                    }
+                    None => {
+                        content.file(&path).map_err(|e| e.to_string())?;
+                    }
+                }
+                let options = ShareOptions { app_name: Some("Notes".into()), ..Default::default() };
+                Client::connect().and_then(|c| c.share(&content, &options)).map(|_| ()).map_err(|e| e.to_string())
+            },
+            move |result: Result<(), String>| {
+                if let (Err(e), Some(ui)) = (result, weak.upgrade()) {
+                    ui.message(&format!("Couldn't share: {e}"));
+                }
+            },
+        );
+    }
     fn context_action(self: &Rc<Self>, target: &Target, action: &str) {
         let (path, directory) = match target {
             Target::Note(doc) => {
@@ -97,6 +128,7 @@ impl Ui {
             "duplicate" => self.duplicate_note(path),
             "trash" => self.trash_note(path),
             "copy-path" => Self::copy_path(&path),
+            "share" => self.share(target, path),
             "open" => {
                 if vault::is_markdown(&path) {
                     self.open_file(path);
@@ -157,6 +189,7 @@ impl Ui {
                 ("Rename / move…", "rename"),
                 ("Duplicate…", "duplicate"),
                 ("Copy path", "copy-path"),
+                ("Share…", "share"),
                 ("Open containing folder", "folder"),
                 ("Move to other pane", "split"),
                 ("Close note", "close"),
@@ -185,6 +218,7 @@ impl Ui {
                 ("Rename / move…", "rename"),
                 ("Duplicate…", "duplicate"),
                 ("Copy path", "copy-path"),
+                ("Share…", "share"),
                 ("Open containing folder", "folder"),
                 ("Move to trash…", "trash"),
             ],
@@ -228,6 +262,7 @@ impl Ui {
             ("Save note", "save"),
             ("Rename / move note…", "rename"),
             ("Copy note path", "copy-path"),
+            ("Share note…", "share"),
         ] {
             menu.append(Some(label), Some(&format!("note.{name}")));
             let action = gio::SimpleAction::new(name, None);
