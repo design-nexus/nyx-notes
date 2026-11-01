@@ -4,7 +4,7 @@ Standalone Rust/GTK4 app. Read PLAN.md for current implementation status and STY
 
 Markdown source fidelity and conflict protection are invariants. Never silently overwrite external changes or modify `.obsidian`. Keep vault I/O and indexing off GTK. Keep derived caches rebuildable.
 
-Use essential targeted checks only: cargo fmt, cargo clippy, relevant domain tests, and tools/check-gtk.py when GTK behavior changes. Do not download AI models for routine verification. Install application updates with ./install.sh without opening or restarting Notes.
+Use essential targeted checks only: cargo fmt, cargo clippy, relevant domain tests, and tools/check-gtk.py when GTK behavior changes. Do not download AI models for routine verification. Install application updates with ./install.sh without opening or restarting Notes. Restarting background services after installation is allowed.
 
 Display name: Notes. Binary/package: nyx-notes. Application ID: io.github.design_nexus.nyx.Notes.
 
