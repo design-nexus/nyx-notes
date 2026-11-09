@@ -12,7 +12,7 @@ serde_json.workspace = true
 blake3.workspace = true
 gio.workspace = true
 notes-vault = { path = "../notes-vault" }
-nyx-sync = { git = "https://github.com/design-nexus/nyx-core.git", rev = "52cba5e27a3dd5f00c780f53e423302b4b5f9c9c" }
+nyx-sync = { git = "https://github.com/design-nexus/nyx-core.git", rev = "4378e243aeb09733843996663cd9a5a7f0cbb821" }
 reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
 url = "2"
 percent-encoding = "2"
