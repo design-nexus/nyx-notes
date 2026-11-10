@@ -35,6 +35,9 @@ pub struct Prefs {
     pub plugin_grants: Vec<serde_json::Value>,
     pub ai_enabled: bool,
     pub semantic_enabled: bool,
+    /// Nyx AI Core's models for writing and for semantic search; empty: AI Core's default.
+    pub ai_writing_model: String,
+    pub ai_embedding_model: String,
     pub integration_read: bool,
     pub integration_write: bool,
     pub glimpse_enabled: bool,
@@ -83,6 +86,8 @@ impl Default for Prefs {
             plugin_grants: Vec::new(),
             ai_enabled: false,
             semantic_enabled: false,
+            ai_writing_model: String::new(),
+            ai_embedding_model: String::new(),
             integration_read: false,
             integration_write: false,
             glimpse_enabled: false,

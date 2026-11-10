@@ -1714,11 +1714,13 @@ dependencies = [
  "blake3",
  "notes-markdown",
  "notes-vault",
+ "nyx-ai-client",
  "rusqlite",
  "serde",
  "serde_json",
  "sqlite-vec",
  "tempfile",
+ "tokio",
 ]
 
 [[package]]
@@ -1799,6 +1801,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
+]
+
+[[package]]
+name = "nyx-ai-client"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-ai.git?rev=8adb41514963ab4216472f7d6e5aa8f84b7bfadf#8adb41514963ab4216472f7d6e5aa8f84b7bfadf"
+dependencies = [
+ "libc",
+ "nyx-ai-proto",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "nyx-ai-proto"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-ai.git?rev=8adb41514963ab4216472f7d6e5aa8f84b7bfadf#8adb41514963ab4216472f7d6e5aa8f84b7bfadf"
+dependencies = [
+ "serde",
+ "serde_json",
 ]
 
 [[package]]

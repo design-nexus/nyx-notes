@@ -12,5 +12,7 @@ notes-vault = { path = "../notes-vault" }
 notes-markdown = { path = "../notes-markdown" }
 rusqlite = { version = "0.40", features = ["bundled"] }
 sqlite-vec = "0.1.9"
+nyx-ai-client = { git = "https://github.com/design-nexus/nyx-ai.git", rev = "8adb41514963ab4216472f7d6e5aa8f84b7bfadf" }
+tokio = { version = "1", features = ["rt", "time"] }
 [dev-dependencies]
 tempfile = "3"

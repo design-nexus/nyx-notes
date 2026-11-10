@@ -22,9 +22,9 @@ The Assistant `nyx-apps` ability consumes this surface. Its policy marks vault r
 
 ## Local AI and semantic indexing
 
-Notes consumes Assistant's private correlated model API v1. Generation uses its existing resident model directly, with no agent, tools, speech, web retrieval, or conversation-history path. Notes supplies only the requested passage, or a bounded set of retrieved excerpts for vault questions. Generated edits always require a visible diff and preserve undo/conditional saves.
+Notes uses Nyx AI Core (`nyx-aid`), the models this computer shares between apps, through `nyx-ai-client` on its private socket; the Assistant doesn't need to be running. Generation is a plain chat request with no tools, speech, web retrieval or conversation history. Notes supplies only the requested passage, or a bounded set of retrieved excerpts for vault questions. Generated edits always require a visible diff and preserve undo/conditional saves.
 
-Optional embeddings use an Assistant-owned, explicitly configured local model endpoint and model identifier. No model/inference engine is hardcoded or downloaded. Cloud endpoints, redirects, and proxies are refused for embedding requests. The endpoint must use a literal loopback address and accept the documented compatible model-server format. See Assistant's `docs/MODEL_API.md` in its standalone repository.
+Local AI preferences choose the writing model (a chat model) and the embedding model from those AI Core has; each defaults to AI Core's model for the role (`chat`, then `assistant`; `embedding`). A model is never swapped for another: when the chosen one is gone, Notes says so. Nothing is downloaded or sent off the computer. The semantic index records which model file and vector settings made it, read from AI Core without loading the model; another embedding model, or settings that change its vectors, rebuild it.
 
 The `notes-ai` provider trait separates transport from indexing. `sqlite-vec` supplies native vector lookup; model-profile-specific, chunked SQLite caches live outside the vault and are rebuildable. Reconciliation checks source fingerprints and only re-embeds changed files. Keyword/vector ranks are combined with reciprocal rank fusion. Cached related-note lookup works without starting a model. Clear-cache and force-rebuild actions are available. No index is generated until semantic indexing is enabled.
 
@@ -55,6 +55,6 @@ Files integration uses the standard Markdown MIME launcher entry and ordinary fi
 
 ## Installation and verification boundaries
 
-Notes, its Glimpse package, and the compatible Assistant/Glimpse consumer updates are installed locally. No application or service is started/restarted by the update. Already running processes retain their old code until their normal restart/session transition; clients handle unsupported model APIs or missing companions as unavailable capabilities.
+Notes, its Glimpse package, and the compatible Assistant/Glimpse consumer updates are installed locally. No application or service is started/restarted by the update. Already running processes retain their old code until their normal restart/session transition; clients handle a missing Nyx AI Core or companion as an unavailable capability.
 
 Verification uses local socket fixtures, deterministic embedding vectors, pure URL/action validation, native invisible GTK checks, and compilation including Assistant's CUDA build. No model was downloaded and no inference was run. Model quality, real server throughput, and live Capture/browser sessions have not been claimed as tested.

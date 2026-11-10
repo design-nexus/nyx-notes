@@ -135,7 +135,7 @@ impl Index {
     ) -> Result<Stats> {
         let caps = provider.capabilities()?;
         if !caps.local || !caps.embedding || caps.embedding_profile.is_empty() {
-            bail!("A configured local embedding provider is required");
+            bail!("Choose an embedding model in Local AI preferences first");
         }
         self.prepare(&caps.embedding_profile)?;
         let mut stats = Stats::default();
@@ -255,7 +255,7 @@ impl Index {
                         || provider_failure
                         || cancel.load(Ordering::Relaxed)
                         || e.to_string().contains("Embedding")
-                        || e.to_string().contains("Assistant")
+                        || e.to_string().contains("AI Core")
                     {
                         return Err(e);
                     }
