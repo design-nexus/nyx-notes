@@ -1,9 +1,9 @@
 use anyhow::{Result, anyhow, bail};
+pub use nyx_ai_client::proto::{Capability, Model};
 use nyx_ai_client::{
     Client,
     proto::{self, ChatRequest, ErrorKind, Message, Priority, Role, Sampling},
 };
-pub use nyx_ai_client::proto::{Capability, Model};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{collections::BTreeMap, future::Future, time::Duration};
@@ -62,16 +62,31 @@ fn client() -> Client {
 }
 pub fn explain(e: proto::Error) -> anyhow::Error {
     match e.kind {
-        ErrorKind::Unavailable => anyhow!("Nyx AI Core isn't running; Notes works normally without it"),
-        ErrorKind::IncompatibleVersion => anyhow!("Notes and Nyx AI Core don't match ({}); update both", e.message),
+        ErrorKind::Unavailable => {
+            anyhow!("Nyx AI Core isn't running; Notes works normally without it")
+        }
+        ErrorKind::IncompatibleVersion => anyhow!(
+            "Notes and Nyx AI Core don't match ({}); update both",
+            e.message
+        ),
         ErrorKind::Busy => anyhow!("Nyx AI Core is busy; try again in a moment"),
         _ => anyhow!("{}", e.message),
     }
 }
 /// The model for a role: Notes' choice, else AI Core's default for the first of
 /// `roles` that has one. Never another model in its place.
-pub fn choose(models: &[Model], defaults: &BTreeMap<String, String>, chosen: &str, roles: &[&str], needs: Capability) -> Result<String> {
-    let what = if needs == Capability::Embedding { "embedding" } else { "writing" };
+pub fn choose(
+    models: &[Model],
+    defaults: &BTreeMap<String, String>,
+    chosen: &str,
+    roles: &[&str],
+    needs: Capability,
+) -> Result<String> {
+    let what = if needs == Capability::Embedding {
+        "embedding"
+    } else {
+        "writing"
+    };
     let id = if chosen.is_empty() {
         roles
             .iter()
@@ -81,7 +96,9 @@ pub fn choose(models: &[Model], defaults: &BTreeMap<String, String>, chosen: &st
         chosen.to_owned()
     };
     let Some(model) = models.iter().find(|m| m.id == id) else {
-        bail!("{id} isn't in Nyx AI Core any more; choose another {what} model in Notes' Local AI preferences");
+        bail!(
+            "{id} isn't in Nyx AI Core any more; choose another {what} model in Notes' Local AI preferences"
+        );
     };
     if !model.capabilities.contains(&needs) {
         bail!("{id} can't be the {what} model");
@@ -90,27 +107,67 @@ pub fn choose(models: &[Model], defaults: &BTreeMap<String, String>, chosen: &st
 }
 /// Which vectors a model gives: its file and the load settings that change them. A new
 /// profile resets the semantic index.
-fn profile(file: &str, size: u64, revision: &Option<String>, architecture: &Option<String>, settings: &BTreeMap<String, String>) -> String {
-    let settings: BTreeMap<_, _> = settings.iter().filter(|(k, _)| VECTOR_KEYS.contains(&k.as_str())).collect();
+fn profile(
+    file: &str,
+    size: u64,
+    revision: &Option<String>,
+    architecture: &Option<String>,
+    settings: &BTreeMap<String, String>,
+) -> String {
+    let settings: BTreeMap<_, _> = settings
+        .iter()
+        .filter(|(k, _)| VECTOR_KEYS.contains(&k.as_str()))
+        .collect();
     format!(
         "nyx-ai:{}",
         json!({"file": file, "size": size, "revision": revision, "architecture": architecture, "settings": settings})
     )
 }
 fn model_profile(model: &Model, effective: &BTreeMap<String, String>) -> String {
-    let file = model.path.as_deref().and_then(|p| std::path::Path::new(p).file_name()).map(|n| n.to_string_lossy().into_owned()).unwrap_or_default();
-    profile(&file, model.size, &model.revision, &model.architecture, effective)
+    let file = model
+        .path
+        .as_deref()
+        .and_then(|p| std::path::Path::new(p).file_name())
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    profile(
+        &file,
+        model.size,
+        &model.revision,
+        &model.architecture,
+        effective,
+    )
 }
 fn identity_profile(id: &proto::ModelIdentity) -> String {
-    profile(&id.file, id.size, &id.revision, &id.architecture, &id.settings)
+    profile(
+        &id.file,
+        id.size,
+        &id.revision,
+        &id.architecture,
+        &id.settings,
+    )
 }
 impl Provider for AiCore {
     fn capabilities(&self) -> Result<Capabilities> {
         Self::block(Duration::from_secs(5), async {
             let client = client();
             let (models, defaults) = Self::catalogue(&client).await?;
-            let writing = choose(&models, &defaults, &self.writing_model, &["chat", "assistant"], Capability::Chat).ok();
-            let embedding = choose(&models, &defaults, &self.embedding_model, &["embedding"], Capability::Embedding).ok();
+            let writing = choose(
+                &models,
+                &defaults,
+                &self.writing_model,
+                &["chat", "assistant"],
+                Capability::Chat,
+            )
+            .ok();
+            let embedding = choose(
+                &models,
+                &defaults,
+                &self.embedding_model,
+                &["embedding"],
+                Capability::Embedding,
+            )
+            .ok();
             let mut embedding_profile = String::new();
             if let Some(id) = &embedding
                 && let Some(model) = models.iter().find(|m| &m.id == id)
@@ -133,16 +190,35 @@ impl Provider for AiCore {
         Self::block(Duration::from_secs(125), async {
             let client = client();
             let (models, defaults) = Self::catalogue(&client).await?;
-            let model = choose(&models, &defaults, &self.writing_model, &["chat", "assistant"], Capability::Chat)?;
+            let model = choose(
+                &models,
+                &defaults,
+                &self.writing_model,
+                &["chat", "assistant"],
+                Capability::Chat,
+            )?;
             let request = ChatRequest {
                 model,
-                messages: vec![Message::text(Role::System, system), Message::text(Role::User, text)],
-                sampling: Sampling { temperature: Some(0.25), max_tokens: Some(2048), ..Default::default() },
+                messages: vec![
+                    Message::text(Role::System, system),
+                    Message::text(Role::User, text),
+                ],
+                sampling: Sampling {
+                    temperature: Some(0.25),
+                    max_tokens: Some(2048),
+                    ..Default::default()
+                },
                 thinking: Some(false),
                 priority: Priority::Interactive,
                 ..Default::default()
             };
-            let reply = client.chat(request).await.map_err(explain)?.collect_chat().await.map_err(explain)?;
+            let reply = client
+                .chat(request)
+                .await
+                .map_err(explain)?
+                .collect_chat()
+                .await
+                .map_err(explain)?;
             if reply.content.len() > 1024 * 1024 {
                 bail!("Generated text exceeds limit");
             }
@@ -153,11 +229,27 @@ impl Provider for AiCore {
         Self::block(Duration::from_secs(95), async {
             let client = client();
             let (models, defaults) = Self::catalogue(&client).await?;
-            let model = choose(&models, &defaults, &self.embedding_model, &["embedding"], Capability::Embedding)?;
-            let priority = if input.len() == 1 { Priority::Interactive } else { Priority::Background };
-            let reply = client.embed(&model, input.to_vec(), priority).await.map_err(explain)?;
+            let model = choose(
+                &models,
+                &defaults,
+                &self.embedding_model,
+                &["embedding"],
+                Capability::Embedding,
+            )?;
+            let priority = if input.len() == 1 {
+                Priority::Interactive
+            } else {
+                Priority::Background
+            };
+            let reply = client
+                .embed(&model, input.to_vec(), priority)
+                .await
+                .map_err(explain)?;
             validate_vectors(&reply.vectors, input.len())?;
-            Ok(Embeddings { profile: identity_profile(&reply.identity), vectors: reply.vectors })
+            Ok(Embeddings {
+                profile: identity_profile(&reply.identity),
+                vectors: reply.vectors,
+            })
         })
     }
 }
@@ -188,20 +280,49 @@ mod tests {
     }
     #[test]
     fn models_are_chosen_never_substituted() {
-        let models = [model("writer", vec![Capability::Chat]), model("vectors", vec![Capability::Embedding])];
+        let models = [
+            model("writer", vec![Capability::Chat]),
+            model("vectors", vec![Capability::Embedding]),
+        ];
         let mut defaults = BTreeMap::new();
-        let pick = |d: &BTreeMap<String, String>, chosen: &str, roles: &[&str], needs| choose(&models, d, chosen, roles, needs);
-        assert!(pick(&defaults, "", &["chat", "assistant"], Capability::Chat).unwrap_err().to_string().contains("Choose a writing model"));
+        let pick = |d: &BTreeMap<String, String>, chosen: &str, roles: &[&str], needs| {
+            choose(&models, d, chosen, roles, needs)
+        };
+        assert!(
+            pick(&defaults, "", &["chat", "assistant"], Capability::Chat)
+                .unwrap_err()
+                .to_string()
+                .contains("Choose a writing model")
+        );
         defaults.insert("assistant".into(), "writer".into());
-        assert_eq!(pick(&defaults, "", &["chat", "assistant"], Capability::Chat).unwrap(), "writer");
-        assert!(pick(&defaults, "gone", &["chat"], Capability::Chat).unwrap_err().to_string().contains("isn't in Nyx AI Core"));
-        assert!(pick(&defaults, "writer", &["embedding"], Capability::Embedding).unwrap_err().to_string().contains("can't be the embedding model"));
-        assert_eq!(pick(&defaults, "vectors", &["embedding"], Capability::Embedding).unwrap(), "vectors");
+        assert_eq!(
+            pick(&defaults, "", &["chat", "assistant"], Capability::Chat).unwrap(),
+            "writer"
+        );
+        assert!(
+            pick(&defaults, "gone", &["chat"], Capability::Chat)
+                .unwrap_err()
+                .to_string()
+                .contains("isn't in Nyx AI Core")
+        );
+        assert!(
+            pick(&defaults, "writer", &["embedding"], Capability::Embedding)
+                .unwrap_err()
+                .to_string()
+                .contains("can't be the embedding model")
+        );
+        assert_eq!(
+            pick(&defaults, "vectors", &["embedding"], Capability::Embedding).unwrap(),
+            "vectors"
+        );
     }
     #[test]
     fn the_profile_before_embedding_matches_the_one_after() {
         let m = model("vectors", vec![Capability::Embedding]);
-        let effective: BTreeMap<String, String> = [("pooling", "mean"), ("ctx-size", "8192")].iter().map(|(k, v)| (k.to_string(), v.to_string())).collect();
+        let effective: BTreeMap<String, String> = [("pooling", "mean"), ("ctx-size", "8192")]
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect();
         let identity: proto::ModelIdentity = serde_json::from_value(json!({
             "id": "vectors", "file": "vectors.gguf", "size": 42, "revision": "r1", "architecture": "gemma3",
             "settings": {"pooling": "mean"},
