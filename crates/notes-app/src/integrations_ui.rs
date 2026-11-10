@@ -15,6 +15,33 @@ pub(super) fn tools() -> Value {
         {"name":"notes.clip","description":"Propose a web clipping from supplied text. Preserves source URL metadata and never fetches websites automatically.","inputSchema":{"type":"object","properties":{"title":{"type":"string"},"url":{"type":"string"},"text":{"type":"string"}},"required":["title","url","text"]}}
     ])
 }
+/// API 2 for nyx, Glimpse and Nyx Assistant: the tools with what they risk, and the
+/// app. Notes answers while it runs; its permissions and review still decide.
+pub(super) fn description(app_id: &str) -> Value {
+    let meta = [
+        ("notes.vault_proposal_status", json!({"risk": "read_only", "result": "object"})),
+        ("notes.vault_status", json!({"risk": "read_only", "aliases": ["status"], "result": "object"})),
+        ("notes.vault_search", json!({"risk": "read_only", "aliases": ["find"], "positional": ["query"], "result": "object"})),
+        ("notes.vault_read", json!({"risk": "read_only", "aliases": ["read"], "positional": ["note"], "result": "object"})),
+        ("notes.vault_open", json!({"risk": "writes", "confirmation": "never", "aliases": ["note"], "positional": ["note"], "result": "none"})),
+        ("notes.vault_create", json!({"risk": "writes", "aliases": ["new"], "positional": ["title", "text"], "result": "object"})),
+        ("notes.vault_append", json!({"risk": "writes", "aliases": ["append"], "positional": ["note", "text"], "result": "object"})),
+        ("notes.vault_replace", json!({"risk": "writes", "result": "object"})),
+        ("notes.clip", json!({"risk": "writes", "result": "object"})),
+    ];
+    let mut list = tools();
+    for t in list.as_array_mut().into_iter().flatten() {
+        if let Some((_, m)) = meta.iter().find(|(n, _)| t["name"] == *n) {
+            t["x-nyx"] = m.clone();
+        }
+    }
+    json!({
+        "tools": list,
+        "nyx": {"api": 2, "app": app_id, "name": "Notes", "icon": "io.github.design_nexus.nyx.Notes", "namespaces": ["notes"],
+                "bus_name": app_id, "activation": "running", "default": "notes.vault_search",
+                "panel": {"id": "notes", "topics": [], "size": {"min": [420, 320], "preferred": [520, 420]}}}
+    })
+}
 pub(super) fn call(name: &str, args: Value, reply: Reply) {
     let Some(ui) = current_ui() else {
         reply(Err("Open Notes and a vault first".into()));
@@ -777,5 +804,15 @@ impl Ui {
                 },
             );
         }
+    }
+}
+
+#[cfg(test)]
+mod description_tests {
+    #[test]
+    fn the_description_is_api_2() {
+        let d = nyx_actions::Description::from_value(&super::description("io.github.design_nexus.nyx.Notes"), None).unwrap();
+        assert!(d.actions.iter().all(|a| !a.asks()));
+        assert_eq!(d.app.panel.as_ref().map(|p| p.id.as_str()), Some("notes"));
     }
 }

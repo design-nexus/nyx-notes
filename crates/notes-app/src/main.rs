@@ -28,12 +28,20 @@ fn main() -> glib::ExitCode {
         .unwrap_or_else(|| "io.github.design_nexus.nyx.Notes".to_string());
     // Windows without an application, like dialogs, take their Wayland app ID from this.
     gtk::glib::set_prgname(Some(id.as_str()));
+    nyx_core::control::describe_if_asked(&window::integration_description(&id));
     let app = gtk::Application::builder()
         .application_id(id.as_str())
         .flags(gio::ApplicationFlags::HANDLES_COMMAND_LINE)
         .build();
-    app.connect_startup(|app| {
-        nyx_core::control::serve_async(app, window::integration_tools(), window::integration_call)
+    let description = window::integration_description(&id);
+    app.connect_startup(move |app| {
+        nyx_core::control::serve_with(app, description.clone(), |request, answer| {
+            window::integration_call(
+                &request.action,
+                request.arguments,
+                Box::new(move |r| answer(r.map_err(|e| nyx_actions::Error::new(nyx_actions::ErrorKind::Failed, e)))),
+            );
+        });
     });
     app.connect_command_line(|app, line| {
         let args = line.arguments();

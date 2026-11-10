@@ -29,5 +29,11 @@ install -Dm644 "$root/data/icons/io.github.design_nexus.nyx.Notes.svg" "$share/i
 for document in README.md LICENSE docs/SYNC.md docs/EXTENSIONS.md docs/INTEGRATIONS.md; do
   install -Dm644 "$root/$document" "$share/nyx-notes/docs/${document##*/}"
 done
+# What Notes does for nyx notes …, Glimpse and the Assistant (its action manifest).
+manifest=$(mktemp)
+if timeout 10 "$HOME/.local/bin/nyx-notes" --describe-actions >"$manifest" 2>/dev/null; then
+  install -Dm644 "$manifest" "$share/nyx/actions/io.github.design_nexus.nyx.Notes.json"
+fi
+rm -f "$manifest"
 if command -v update-desktop-database >/dev/null; then update-desktop-database "$share/applications"; fi
 printf 'Installed Notes without opening it.\n'

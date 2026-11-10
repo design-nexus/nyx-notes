@@ -201,11 +201,11 @@ pub fn launcher_action(
     );
     Ok(())
 }
-pub fn integration_tools() -> serde_json::Value {
-    integrations_ui::tools()
-}
 pub fn integration_call(name: &str, args: serde_json::Value, reply: nyx_core::control::Reply) {
     integrations_ui::call(name, args, reply);
+}
+pub fn integration_description(app_id: &str) -> serde_json::Value {
+    integrations_ui::description(app_id)
 }
 fn current_ui() -> Option<Rc<Ui>> {
     UI.with(|s| s.borrow().clone())
