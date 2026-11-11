@@ -24,10 +24,10 @@ pub(super) fn description(app_id: &str) -> Value {
         ("notes.vault_search", json!({"risk": "read_only", "aliases": ["find"], "positional": ["query"], "result": "object"})),
         ("notes.vault_read", json!({"risk": "read_only", "aliases": ["read"], "positional": ["note"], "result": "object"})),
         ("notes.vault_open", json!({"risk": "writes", "confirmation": "never", "aliases": ["note"], "positional": ["note"], "result": "none"})),
-        ("notes.vault_create", json!({"risk": "writes", "aliases": ["new"], "positional": ["title", "text"], "result": "object"})),
+        ("notes.vault_create", json!({"icon": "document-new-symbolic", "risk": "writes", "aliases": ["new"], "positional": ["title", "text"], "result": "object"})),
         ("notes.vault_append", json!({"risk": "writes", "aliases": ["append"], "positional": ["note", "text"], "result": "object"})),
         ("notes.vault_replace", json!({"risk": "writes", "result": "object"})),
-        ("notes.clip", json!({"risk": "writes", "result": "object"})),
+        ("notes.clip", json!({"icon": "web-browser-symbolic", "risk": "writes", "result": "object"})),
     ];
     let mut list = tools();
     for t in list.as_array_mut().into_iter().flatten() {
