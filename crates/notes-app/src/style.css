@@ -28,8 +28,11 @@ window.notes-window .notes-heading-3 { font-size: 1.2em; font-weight: 700; }
 window.notes-window .notes-heading-4, window.notes-window .notes-heading-5, window.notes-window .notes-heading-6 { font-weight: 700; }
 window.notes-window .notes-callout { border-left: 3px solid @theme_accent; padding-left: 12px; }
 window.notes-window .notes-table-cell { padding: 6px 10px; }
-/* Blended: the vault and the editor meet without a line. */
+/* The graph window and the history and conflict dialogs: their panes meet without a
+   line. The main window's sheet draws one between its panes (base2.css wins there). */
 window.notes-window paned > separator { background-color: @theme_bg; background-image: none; border: none; box-shadow: none; min-width: 1px; }
+/* The sidebar's drag handle, beside the sheet's own line: the frame's colour. */
+window.notes-window .app-body > paned.sidebar-split > separator { background: transparent; background-image: none; border: none; box-shadow: none; min-width: 1px; }
 /* Tabs: a soft pill for the open one, no underline. */
 window.notes-window notebook > header tab:checked { box-shadow: none; border: none; }
 /* The header's middle: the open note's folder, its name, the unsaved dot. */

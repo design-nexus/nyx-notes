@@ -382,10 +382,6 @@ impl Ui {
                 ..Default::default()
             },
         );
-        let overlay = gtk::Overlay::new();
-        let frame = widgets::vbox(0);
-        let body = widgets::hbox(0);
-        body.set_vexpand(true);
         let nav = widgets::vbox(0);
         nav.add_css_class("settings-navigation");
         nav.set_width_request(SIDEBAR);
@@ -634,7 +630,26 @@ Your Markdown files stay where they are.",
         let connect_vault = widgets::labeled_button("folder-open-symbolic", "Connect a vault…");
         welcome_panel.append(&connect_vault);
         workspace.add_named(&welcome_panel, Some("welcome"));
-        workspace.add_named(&inspector.wrap(&editor_split), Some("editor"));
+        let inspector_host = inspector.wrap(&editor_split);
+        // A line between the editor and the inspector while it's docked beside it.
+        let inspector_line = nyx_ui::frame::pane_line(gtk::Orientation::Vertical);
+        if let Some(row) = inspector_host.child().and_downcast::<gtk::Box>() {
+            row.insert_child_after(&inspector_line, Some(&editor_split));
+        }
+        let sync_line = {
+            let (line, root) = (inspector_line.clone(), inspector.root.clone());
+            move || {
+                let docked = root.parent().is_some_and(|p| p.is::<gtk::Box>());
+                line.set_visible(docked && root.reveals_child());
+            }
+        };
+        sync_line();
+        {
+            let sync_line = sync_line.clone();
+            inspector.root.connect_reveal_child_notify(move |_| sync_line());
+        }
+        inspector.connect_floating(move |_| sync_line());
+        workspace.add_named(&inspector_host, Some("editor"));
         inspector.set_open(prefs::get().inspector_open);
         inspector.connect_open(|open| {
             if prefs::get().inspector_open != open {
@@ -644,13 +659,11 @@ Your Markdown files stay where they are.",
         center.append(&workspace);
         center.append(&foot);
         let split = gtk::Paned::new(gtk::Orientation::Horizontal);
-        split.set_start_child(Some(&nav));
-        split.set_end_child(Some(&center));
+        split.add_css_class("sidebar-split");
         split.set_resize_start_child(false);
         split.set_shrink_start_child(false);
         split.set_position(SIDEBAR);
         split.set_hexpand(true);
-        body.append(&split);
         // The header: the app and the vault, vault search, and Settings.
         let header =
             nyx_ui::chrome::app_header(&window, "accessories-text-editor-symbolic", "Notes");
@@ -670,10 +683,16 @@ Your Markdown files stay where they are.",
         header
             .end
             .append(&nyx_ui::chrome::settings_button(settings));
-        frame.append(&header.root);
-        frame.append(&body);
-        overlay.set_child(Some(&frame));
-        window.set_child(Some(&overlay));
+        let frame = nyx_ui::frame::AppFrame::new(&header.root);
+        frame.set_sidebar(&nav);
+        frame.set_page(&center);
+        // The sidebar keeps its drag handle: it and the sheet go into the split.
+        frame.body.remove(&nav);
+        frame.body.remove(&frame.page);
+        split.set_start_child(Some(&nav));
+        split.set_end_child(Some(&frame.page));
+        frame.body.append(&split);
+        let overlay = frame.install(&window);
         let css = gtk::CssProvider::new();
         if let Some(display) = gdk::Display::default() {
             gtk::style_context_add_provider_for_display(
