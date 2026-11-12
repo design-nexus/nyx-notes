@@ -630,26 +630,7 @@ Your Markdown files stay where they are.",
         let connect_vault = widgets::labeled_button("folder-open-symbolic", "Connect a vault…");
         welcome_panel.append(&connect_vault);
         workspace.add_named(&welcome_panel, Some("welcome"));
-        let inspector_host = inspector.wrap(&editor_split);
-        // A line between the editor and the inspector while it's docked beside it.
-        let inspector_line = nyx_ui::frame::pane_line(gtk::Orientation::Vertical);
-        if let Some(row) = inspector_host.child().and_downcast::<gtk::Box>() {
-            row.insert_child_after(&inspector_line, Some(&editor_split));
-        }
-        let sync_line = {
-            let (line, root) = (inspector_line.clone(), inspector.root.clone());
-            move || {
-                let docked = root.parent().is_some_and(|p| p.is::<gtk::Box>());
-                line.set_visible(docked && root.reveals_child());
-            }
-        };
-        sync_line();
-        {
-            let sync_line = sync_line.clone();
-            inspector.root.connect_reveal_child_notify(move |_| sync_line());
-        }
-        inspector.connect_floating(move |_| sync_line());
-        workspace.add_named(&inspector_host, Some("editor"));
+        workspace.add_named(&inspector.wrap(&editor_split), Some("editor"));
         inspector.set_open(prefs::get().inspector_open);
         inspector.connect_open(|open| {
             if prefs::get().inspector_open != open {
