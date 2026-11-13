@@ -526,7 +526,7 @@ impl Ui {
             }
         });
         view.refresh();
-        window.present();
+        self.show_window_view(&window);
     }
     fn collection_property(self: &Rc<Self>, path: PathBuf, key: String) {
         let root = self.root.borrow().clone();

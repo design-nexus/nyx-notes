@@ -38,6 +38,14 @@ impl Default for SyncState {
     }
 }
 impl SyncState {
+    /// Keeps `label` showing what sync is doing.
+    pub(super) fn watch(&self, label: &gtk::Label) {
+        let now = self.status.borrow().clone();
+        if !now.is_empty() {
+            label.set_text(&now);
+        }
+        self.observers.borrow_mut().push(label.downgrade());
+    }
     fn status(&self, text: &str) {
         *self.status.borrow_mut() = text.into();
         self.observers.borrow_mut().retain(|w| {

@@ -107,6 +107,8 @@ impl Ui {
         for doc in self.docs.borrow().iter() {
             doc.editor.set_mode(mode);
         }
+        self.sync_mode_switches();
+        self.shell.format.popdown();
         prefs::update(|p| {
             p.editor_mode = match mode {
                 Mode::Source => "source",
@@ -902,7 +904,7 @@ impl Ui {
                 match result {
                     Ok(())=>{
                         let canvases=ui.canvases.borrow().iter().filter(|(_,(_,dirty))|!dirty.get()).map(|(path,(window,_))|(path.clone(),window.clone())).collect::<Vec<_>>();
-                        for(path,window)in canvases{window.close();let mapped=if !restore{path.strip_prefix(&old).ok().map(|tail|new.join(tail)).unwrap_or(path)}else{path};ui.open_canvas(mapped);}
+                        for(path,window)in canvases{request_close(&window);let mapped=if !restore{path.strip_prefix(&old).ok().map(|tail|new.join(tail)).unwrap_or(path)}else{path};ui.open_canvas(mapped);}
                         let active=ui.active().map(|d|d.path.clone());
                         let mut snapshots=ui.docs.borrow().iter().map(|doc|{let path=if !restore&&doc.path==old{new.clone()}else if !restore&&doc.path.starts_with(&old){new.join(doc.path.strip_prefix(&old).unwrap())}else{doc.path.clone()};let right=ui.secondary.page_num(&doc.editor.root).is_some();let text=doc.editor.text();let byte=text.char_indices().nth(doc.editor.buffer.cursor_position()as usize).map_or(text.len(),|(b,_)|b);(path,right,byte,active.as_ref()==Some(&doc.path))}).collect::<Vec<_>>();snapshots.sort_by_key(|(_,_,_,active)|*active);
                         let docs=ui.docs.borrow().clone();for doc in docs{ui.remove_tab(doc);}

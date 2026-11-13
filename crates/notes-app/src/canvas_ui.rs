@@ -669,7 +669,7 @@ impl CanvasView {
                             if let Some(v) = weak.upgrade() {
                                 if ok {
                                     v.allow_close.set(true);
-                                    v.window.close();
+                                    request_close(&v.window);
                                 } else if let Some(ui) = v.ui.upgrade() {
                                     ui.closing.set(false);
                                 }
@@ -681,7 +681,7 @@ impl CanvasView {
                         view.persist(move || {
                             if let Some(v) = weak.upgrade() {
                                 v.allow_close.set(true);
-                                v.window.close();
+                                request_close(&v.window);
                             }
                         });
                     }
@@ -955,7 +955,7 @@ impl Ui {
     }
     pub(super) fn open_canvas(self: &Rc<Self>, path: PathBuf) {
         if let Some((window, _)) = self.canvases.borrow().get(&path) {
-            window.present();
+            self.show_window_view(window);
             return;
         }
         let (Some(root), Some(db)) = (self.root.borrow().clone(), self.db.borrow().clone()) else {
@@ -1311,7 +1311,7 @@ impl Ui {
             }
         });
         view.assets();
-        window.present();
+        self.show_window_view(&window);
         if let Some(draft) = draft.filter(|d| {
             d.text != serde_json::to_string_pretty(&*view.canvas.borrow()).unwrap_or_default()
         }) {

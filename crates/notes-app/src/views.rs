@@ -71,13 +71,48 @@ impl Ui {
         window.set_titlebar(Some(&widgets::hbox(0)));
         let root = widgets::vbox(0);
         let toolbar = widgets::hbox(6);
-        toolbar.add_css_class("notes-find");
-        let heading = widgets::label(title, "");
+        toolbar.add_css_class("editor-bar");
+        let heading = gtk::Label::new(None);
+        heading.set_markup(&format!("<b>{}</b>", glib::markup_escape_text(title)));
+        heading.add_css_class("crumb");
         heading.set_hexpand(true);
         heading.set_xalign(0.0);
         toolbar.append(&heading);
         root.append(&toolbar);
-        window.set_child(Some(&root));
+        // A tab, not a window: the window stays (hidden) for its dialogs and close
+        // handlers; closing the tab closes it.
+        let icon = match title {
+            "Knowledge graph" => "nyx-notes-graph-symbolic",
+            "Collections" => "nyx-notes-kanban-symbolic",
+            "Writing projects" => "nyx-notes-book-symbolic",
+            t if t.ends_with(".canvas") || t.starts_with("Canvas") => "nyx-notes-canvas-symbolic",
+            _ => "nyx-notes-file-symbolic",
+        };
+        let tab = match title {
+            "Knowledge graph" => "Graph",
+            t => t,
+        };
+        let w = window.downgrade();
+        self.view_tab(
+            tab,
+            icon,
+            root.upcast_ref(),
+            title == "Knowledge graph",
+            Rc::new(move || {
+                if let Some(w) = w.upgrade()
+                    && !w.emit_by_name::<bool>("close-request", &[])
+                {
+                    w.destroy();
+                }
+            }),
+        );
+        self.shell.view_windows.borrow_mut().push((window.downgrade(), root.clone().upcast()));
+        let (weak, page) = (Rc::downgrade(self), root.downgrade());
+        window.connect_destroy(move |_| {
+            if let (Some(ui), Some(page)) = (weak.upgrade(), page.upgrade()) {
+                ui.close_view(page.upcast_ref());
+            }
+        });
         (window, root, toolbar)
     }
 }

@@ -350,6 +350,6 @@ impl Ui {
             }
         });
         update();
-        window.present();
+        self.show_window_view(&window);
     }
 }

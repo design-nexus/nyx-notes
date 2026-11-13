@@ -299,6 +299,99 @@ pub fn tag_counts(db: &Path, limit: usize) -> Result<Vec<(String, usize)>> {
     })?;
     Ok(rows.collect::<std::result::Result<Vec<_>, _>>()?)
 }
+/// A note for the note list: where it is, when it changed, and its opening words.
+#[derive(Clone, Debug)]
+pub struct Listed {
+    pub path: PathBuf,
+    /// Seconds since 1970.
+    pub modified: i64,
+    pub snippet: String,
+}
+/// Every indexed note under `root`, newest first, with the start of its text (no front
+/// matter or leading heading).
+pub fn note_list(db: &Path, root: &Path) -> Result<Vec<Listed>> {
+    let conn = connect(db)?;
+    let mut statement = conn.prepare(
+        "SELECT s.path, s.modified, substr(n.body, 1, 900) FROM stamps s JOIN notes n ON n.rowid = s.fts_rowid ORDER BY s.modified DESC",
+    )?;
+    let rows = statement.query_map([], |row| {
+        Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?, row.get::<_, String>(2)?))
+    })?;
+    let mut out = Vec::new();
+    for row in rows {
+        let (path, modified, body) = row?;
+        let path = PathBuf::from(path);
+        if path.starts_with(root) {
+            out.push(Listed { path, modified, snippet: opening(&body) });
+        }
+    }
+    Ok(out)
+}
+/// Markdown inline marks taken out: emphasis, code, and links as their text.
+pub fn plain(line: &str) -> String {
+    let mut out = String::with_capacity(line.len());
+    let mut rest = line;
+    while let Some(c) = rest.chars().next() {
+        if let Some(inner) = rest.strip_prefix("[[")
+            && let Some(end) = inner.find("]]")
+        {
+            let target = &inner[..end];
+            out.push_str(target.rsplit('|').next().unwrap_or(target));
+            rest = &inner[end + 2..];
+            continue;
+        }
+        if c == '['
+            && let Some(close) = rest.find("](")
+            && let Some(end) = rest[close..].find(')')
+        {
+            out.push_str(&rest[1..close]);
+            rest = &rest[close + end + 1..];
+            continue;
+        }
+        if matches!(c, '*' | '_' | '`' | '~' | '=') {
+            rest = &rest[c.len_utf8()..];
+            continue;
+        }
+        out.push(c);
+        rest = &rest[c.len_utf8()..];
+    }
+    out
+}
+/// A note's first words, for its row: past the front matter and a leading heading.
+fn opening(body: &str) -> String {
+    let mut text = body;
+    if let Some(rest) = text.strip_prefix("---\n")
+        && let Some(end) = rest.find("\n---")
+    {
+        text = rest[end + 4..].trim_start_matches(['-', '\n', '\r']);
+    }
+    let mut lines = text.lines().map(str::trim).filter(|l| !l.is_empty()).peekable();
+    if lines.peek().is_some_and(|l| l.starts_with('#') && !l.starts_with("#[")) {
+        lines.next();
+    }
+    let mut out = String::new();
+    for line in lines {
+        if line.starts_with("|") || line.starts_with("```") {
+            continue;
+        }
+        let line = line.trim_start_matches(['#', '>', '-', '*', ' ']).trim_start_matches("[ ] ").trim_start_matches("[x] ");
+        // A callout's marker ("[!info] Decision") goes; its title stays.
+        let line = match line.strip_prefix("[!").and_then(|l| l.split_once(']')) {
+            Some((_, title)) => title.trim_start(),
+            None => line,
+        };
+        let line = plain(line);
+        let line = line.as_str();
+        if !out.is_empty() {
+            out.push(' ');
+        }
+        out.push_str(line);
+        if out.chars().count() > 160 {
+            break;
+        }
+    }
+    out.chars().take(180).collect()
+}
 pub fn search(db: &Path, query: &str) -> Result<Vec<SearchHit>> {
     query_index(db, query, 100)
 }

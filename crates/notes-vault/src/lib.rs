@@ -11,7 +11,8 @@ use gio::prelude::*;
 pub use links::local_target as local_link_target;
 pub use links::{Backlink, ResolvedLink, backlinks, resolve_link};
 pub use search::{
-    SearchHit, mentions, rebuild_index, reconcile_index, search, tag_counts, update_index,
+    Listed, SearchHit, mentions, note_list, plain, rebuild_index, reconcile_index, search, tag_counts,
+    update_index,
 };
 use serde::{Deserialize, Serialize};
 use std::io::Write;

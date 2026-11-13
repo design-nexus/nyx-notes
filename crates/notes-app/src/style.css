@@ -157,3 +157,147 @@ window.notes-window .inspector listview.cards > row { padding: 0; margin-bottom:
 window.notes-window .link-card { padding: 10px 12px; border-radius: 11px; background: @theme_card; }
 window.notes-window .link-card-title { font-weight: 500; font-size: 12.5px; color: @theme_text; }
 window.notes-window .link-card-text { font-size: 12px; color: @theme_dim_text; }
+
+/* ---- 2.0 frame (nyx-design/mockups/notes) ---- */
+
+/* The palette's field and the palette under it. */
+window.notes-window .app-header entry.bar-search { min-width: 360px; }
+window.notes-window .palette-field .key-hint { background: transparent; }
+popover.palette > contents { padding: 6px; border-radius: 12px; }
+.popover-standin { background: @theme_popover; border-radius: 12px; padding: 6px; box-shadow: 0 10px 30px alpha(black, 0.4), inset 0 0 0 1px @hairline; }
+.popover-standin.format-bar { padding: 4px; border-radius: 10px; }
+list.palette-list { background: transparent; }
+list.palette-list > row.palette-section-row { padding: 8px 10px 3px 10px; background: transparent; }
+.palette-section { font-size: 0.846em; font-weight: 600; color: @theme_text_tertiary; }
+list.palette-list > row.palette-row { min-height: 34px; padding: 0 10px; border-radius: 7px; }
+list.palette-list > row.palette-row:selected { background: @nav_active; color: @theme_text; }
+list.palette-list > row.palette-row image { color: @theme_dim_text; -gtk-icon-size: 15px; }
+.palette-where,
+.palette-key { color: @theme_text_tertiary; font-size: 0.846em; margin-left: 10px; }
+.palette-hint { padding: 8px 10px 2px 10px; color: @theme_text_tertiary; font-size: 0.846em; }
+
+/* The grouped ⋯ menu. */
+popover.notes-grouped-menu > contents { min-width: 250px; }
+.menu-heading { padding: 6px 10px 2px 10px; font-size: 0.846em; font-weight: 600; color: @theme_text_tertiary; }
+.menu-key { color: @theme_text_tertiary; font-size: 0.846em; }
+.menu-icon { color: @theme_dim_text; }
+.danger-text { color: @theme_danger; }
+
+/* Sidebar: the vault, Recent, Pinned and Daily notes, folders, tags, sync. */
+window.notes-window menubutton.vault-switch > button { min-height: 32px; padding: 0 6px 0 8px; margin: 0 0 4px 0; border-radius: 7px; background: transparent; box-shadow: none; }
+window.notes-window menubutton.vault-switch > button:hover { background: @row_hover; }
+window.notes-window .vault-name { font-weight: 600; color: @theme_text; }
+window.notes-window .vault-icon { color: @theme_accent; }
+window.notes-window .settings-navigation button.nav-item.quick-item { min-height: 30px; padding: 0 10px; border-radius: 7px; color: @theme_dim_text; box-shadow: none; }
+window.notes-window .settings-navigation button.nav-item.quick-item image { -gtk-icon-size: 15px; color: @theme_dim_text; }
+window.notes-window .settings-navigation button.nav-item.quick-item.active { background: @nav_active; color: @theme_text; box-shadow: none; }
+window.notes-window .settings-navigation button.nav-item.quick-item.active image { color: @theme_accent; }
+/* Folders and Tags: nyx_ui::sidebar headings (uppercase, in their section's colour). */
+window.notes-window .settings-navigation .nav-group-row button.nav-group-add { min-width: 22px; min-height: 22px; padding: 0; margin: 0 4px 2px 0; color: @theme_text_tertiary; }
+window.notes-window .tree-folder.active { color: @theme_text; }
+window.notes-window .tree-folder.active .tree-name { color: @theme_text; font-weight: 500; }
+window.notes-window .tree-folder.active image { color: @theme_accent; }
+window.notes-window .tree-tags { margin-top: 0; }
+window.notes-window flowbox.tag-chips { margin: 2px 4px 0 6px; }
+window.notes-window flowbox.tag-chips flowboxchild { padding: 0; }
+window.notes-window button.chip { min-height: 22px; padding: 0 8px; border-radius: 6px; background: @field; box-shadow: inset 0 0 0 1px @hairline; color: @theme_dim_text; font-size: 0.846em; font-weight: 400; }
+window.notes-window button.chip:hover { color: @theme_text; }
+window.notes-window button.chip.on { background: alpha(@theme_accent, 0.14); box-shadow: inset 0 0 0 1px alpha(@theme_accent, 0.4); color: @theme_text; }
+window.notes-window .side-foot { padding: 12px 6px 4px 10px; }
+window.notes-window .side-foot-icon { -gtk-icon-size: 13px; color: @theme_success; }
+window.notes-window .side-foot-text { color: @theme_text_tertiary; font-size: 0.846em; }
+
+/* One row of tabs across the sheet. */
+window.notes-window .tab-strip { min-height: 38px; padding: 4px 8px 0 8px; border-bottom: 1px solid @sheet_line; }
+window.notes-window .strip-tab { min-height: 28px; padding: 0 4px 0 10px; margin: 0 2px 4px 0; border-radius: 7px; color: @theme_dim_text; font-size: 0.962em; }
+window.notes-window .strip-tab:hover { background: @row_hover; }
+window.notes-window .strip-tab.active { background: alpha(@theme_text, 0.06); box-shadow: inset 0 0 0 1px @hairline; color: @theme_text; }
+window.notes-window .strip-icon { -gtk-icon-size: 14px; color: @theme_dim_text; }
+window.notes-window .strip-tab.active .strip-icon { color: @theme_text; }
+window.notes-window button.strip-close { min-width: 20px; min-height: 20px; padding: 0; border-radius: 5px; color: @theme_text_tertiary; }
+window.notes-window button.strip-close image { -gtk-icon-size: 11px; }
+window.notes-window button.strip-add { min-width: 26px; min-height: 26px; margin-bottom: 4px; color: @theme_text_tertiary; }
+
+/* The note list. */
+window.notes-window .note-list { background: transparent; }
+window.notes-window .note-list-head { min-height: 44px; padding: 0 8px 0 14px; border-bottom: 1px solid @sheet_line; }
+window.notes-window .note-list-title { font-weight: 600; }
+window.notes-window .note-list-count { color: @theme_text_tertiary; }
+window.notes-window button.note-sort { min-height: 24px; padding: 0 8px; border-radius: 6px; background: @field; box-shadow: inset 0 0 0 1px @hairline; font-size: 0.923em; font-weight: 400; }
+window.notes-window button.note-sort image { -gtk-icon-size: 11px; }
+window.notes-window .query-chips { padding: 8px 12px 4px 12px; }
+window.notes-window list.note-rows { background: transparent; padding: 4px 6px 20px 6px; }
+window.notes-window list.note-rows > row { padding: 9px 10px; margin-bottom: 1px; border-radius: 7px; background: transparent; }
+window.notes-window list.note-rows > row:hover { background: @row_hover; }
+window.notes-window list.note-rows > row:selected { background: @nav_active; color: @theme_text; }
+window.notes-window .note-row-title { font-weight: 500; }
+window.notes-window .note-pin { -gtk-icon-size: 12px; color: @theme_accent; }
+window.notes-window .note-row-snippet { color: @theme_dim_text; font-size: 0.923em; margin-top: 2px; }
+window.notes-window .note-row-meta { color: @theme_text_tertiary; font-size: 0.846em; margin-top: 3px; }
+window.notes-window .note-list-empty { color: @theme_text_tertiary; padding: 30px 12px; }
+
+/* Each note's bar: where it is, its save dot, Source, Live and Read. */
+window.notes-window .editor-bar { min-height: 40px; padding: 0 10px 0 16px; border-bottom: 1px solid @sheet_line; }
+window.notes-window .crumb { color: @theme_text_tertiary; }
+window.notes-window .mode-switch { background: @field; border-radius: 7px; padding: 2px; }
+window.notes-window .mode-switch button { min-height: 22px; padding: 0 9px; border-radius: 5px; background: transparent; box-shadow: none; font-size: 0.923em; font-weight: 400; color: @theme_dim_text; }
+window.notes-window .mode-switch button:checked { background: @theme_raised; color: @theme_text; box-shadow: 0 1px 2px alpha(black, 0.25); }
+window.notes-window .editor-bar .save-dot { min-width: 7px; min-height: 7px; border-radius: 4px; background: @theme_accent; }
+window.notes-window .editor-bar button { min-height: 28px; }
+
+/* The format bar over a selection. */
+popover.format-bar > contents { padding: 4px; border-radius: 10px; }
+.format-bar button { min-width: 30px; min-height: 30px; padding: 0; }
+.format-bar .format-sep { margin: 4px 3px; min-width: 1px; background: @hairline; }
+
+/* Inspector: sentence-case headings, cards, Info's numbers. */
+window.notes-window .inspector-heading.sentence { letter-spacing: 0; font-size: 0.846em; font-weight: 600; margin: 12px 4px 2px 4px; }
+window.notes-window button.section-action { min-height: 20px; padding: 0 6px; margin-top: 10px; color: @theme_accent; font-size: 0.846em; font-weight: 500; }
+window.notes-window .info-tile { padding: 8px 10px; border-radius: 11px; background: @theme_card; box-shadow: inset 0 0 0 1px @hairline; }
+window.notes-window .info-value { font-size: 1.154em; font-weight: 600; }
+window.notes-window .info-caption { color: @theme_text_tertiary; font-size: 0.846em; }
+window.notes-window .info-card { padding: 4px 12px; border-radius: 11px; background: @theme_card; box-shadow: inset 0 0 0 1px @hairline; }
+window.notes-window .info-row { min-height: 30px; }
+window.notes-window .info-key { color: @theme_text_tertiary; font-size: 0.923em; }
+window.notes-window .info-val { font-size: 0.923em; }
+window.notes-window .info-empty { color: @theme_text_tertiary; font-size: 0.923em; padding: 6px 0; }
+window.notes-window .info-file { font-size: 0.846em; color: @theme_dim_text; padding: 6px 0; }
+window.notes-window .inspector .link-card { box-shadow: inset 0 0 0 1px @hairline; }
+
+/* Assist: the asks, then the proposed edit. */
+window.notes-window .assist-asks flowboxchild { padding: 0; }
+window.notes-window .assist-heading { font-size: 0.846em; font-weight: 600; color: @theme_text_tertiary; margin-top: 8px; }
+window.notes-window .assist-diff { padding: 10px 12px; border-radius: 11px; background: @theme_card; box-shadow: inset 0 0 0 1px @hairline; }
+window.notes-window .assist-del { color: @theme_danger; background: alpha(@theme_danger, 0.12); text-decoration: line-through; }
+window.notes-window .assist-ins { color: @theme_success; background: alpha(@theme_success, 0.12); }
+window.notes-window .assist-note { color: @theme_text_tertiary; font-size: 0.846em; }
+
+/* Views and reviews in tabs: History, a conflict. */
+window.notes-window .docked-review { padding: 0; }
+window.notes-window .docked-content { padding: 14px 16px; }
+window.notes-window .timeline { padding: 10px 8px; }
+window.notes-window button.timeline-item { padding: 8px 10px; border-radius: 7px; font-weight: 400; }
+window.notes-window button.timeline-item.on { background: @nav_active; }
+window.notes-window .timeline-when { font-weight: 500; }
+window.notes-window .timeline-what { color: @theme_text_tertiary; font-size: 0.846em; }
+window.notes-window .history-note { color: @theme_text_tertiary; font-size: 0.846em; margin: 0 0 8px 4px; }
+window.notes-window .conflict-banner { padding: 10px 14px; border-radius: 11px; background: alpha(@theme_warning, 0.10); box-shadow: inset 0 0 0 1px alpha(@theme_warning, 0.3); }
+window.notes-window .conflict-banner > image { color: @theme_warning; }
+window.notes-window .conflict-title { font-weight: 600; }
+window.notes-window .conflict-text { color: @theme_dim_text; font-size: 0.923em; }
+window.notes-window .conflict-compare { margin-top: 12px; }
+window.notes-window .conflict-pane { padding: 12px 14px; border-radius: 11px; background: @theme_card; box-shadow: inset 0 0 0 1px @hairline; }
+window.notes-window .conflict-head { margin-bottom: 8px; }
+window.notes-window .conflict-pane-title { font-weight: 600; }
+window.notes-window .conflict-pane-when { color: @theme_text_tertiary; font-size: 0.846em; }
+
+/* First run: one card. */
+window.notes-window .welcome-card { padding: 26px; border-radius: 14px; background: @theme_card; box-shadow: inset 0 0 0 1px @hairline; }
+window.notes-window .welcome-title { font-size: 1.385em; font-weight: 600; }
+window.notes-window .welcome-text { color: @theme_dim_text; }
+window.notes-window .welcome-accent { color: @theme_accent; }
+window.notes-window .welcome-heading { font-size: 0.846em; font-weight: 600; color: @theme_text_tertiary; margin: 8px 0 4px 2px; }
+window.notes-window button.welcome-vault { min-height: 34px; padding: 0 10px; border-radius: 7px; font-weight: 400; }
+window.notes-window button.welcome-vault image { color: @theme_accent; }
+window.notes-window .welcome-where { color: @theme_text_tertiary; font-size: 0.846em; }
+window.notes-window button.welcome-link { padding: 0; min-height: 0; background: transparent; box-shadow: none; }

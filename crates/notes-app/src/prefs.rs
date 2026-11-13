@@ -53,6 +53,12 @@ pub struct Prefs {
     pub design_2: bool,
     /// The inspector (outline, links, info) beside the editor.
     pub inspector_open: bool,
+    /// Pinned notes, by vault: paths inside it.
+    pub pinned: BTreeMap<PathBuf, Vec<PathBuf>>,
+    /// The note list's order: "edited" or "name".
+    pub note_sort: String,
+    /// The note list beside the editor.
+    pub note_list: bool,
 }
 impl Default for Prefs {
     fn default() -> Self {
@@ -99,6 +105,9 @@ impl Default for Prefs {
             saved_searches: Vec::new(),
             design_2: true,
             inspector_open: true,
+            pinned: BTreeMap::new(),
+            note_sort: "edited".into(),
+            note_list: true,
         }
     }
 }

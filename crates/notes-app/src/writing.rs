@@ -10,8 +10,10 @@ impl Ui {
     pub(super) fn apply_writing(&self) {
         let p = prefs::get();
         self.nav.set_visible(!p.focus_mode);
-        self.notebook.set_show_tabs(!p.focus_mode);
-        self.secondary.set_show_tabs(!p.focus_mode);
+        // The tabs are the strip's (the notebooks' own stay hidden); focus mode hides it
+        // and the note list.
+        self.shell.strip.set_visible(!p.focus_mode && !self.shell.welcome.get());
+        self.fit_list();
         if p.focus_mode {
             self.inspector.escape();
         }
@@ -84,16 +86,22 @@ impl Ui {
             &self.window,
             "Document history",
             "Document history",
-            "− current text   + historical text. Restore changes the editor buffer and keeps undo/recovery protection.",
+            "",
             950,
             650,
         );
         dialog.add_button("Close", gtk::ResponseType::Close);
-        dialog.add_button("Restore checked changes", gtk::ResponseType::Other(1));
-        dialog.add_button("Restore whole revision", gtk::ResponseType::Accept);
+        dialog.add_button("Restore the checked lines", gtk::ResponseType::Other(1));
+        dialog.add_button("Restore this version", gtk::ResponseType::Accept);
+        if let Some(b) = dialog.buttons.last_child() {
+            b.add_css_class("suggested-action");
+        }
+        let name = doc.path.file_stem().unwrap_or_default().to_string_lossy().into_owned();
+        dialog.dock(self, "History", "history-symbolic", &format!("History of <b>{}</b>", glib::markup_escape_text(&name)));
         let panes = gtk::Paned::new(gtk::Orientation::Horizontal);
         panes.set_vexpand(true);
-        let revisions = widgets::vbox(4);
+        let revisions = widgets::vbox(2);
+        revisions.add_css_class("timeline");
         let right = widgets::vbox(4);
         let diff_buffer = sourceview5::Buffer::new(None);
         let diff = sourceview5::View::with_buffer(&diff_buffer);
@@ -115,7 +123,11 @@ impl Ui {
         right.append(&choice_scroll);
         panes.set_start_child(Some(&scroll(&revisions)));
         panes.set_end_child(Some(&right));
-        panes.set_position(220);
+        panes.set_position(230);
+        let note = widgets::label("Red is the note now, green the version you picked. Restoring changes the editor; Undo takes it back.", "history-note");
+        note.set_wrap(true);
+        note.set_xalign(0.0);
+        right.prepend(&note);
         dialog.content_area().append(&panes);
         type Selected = (
             u64,
@@ -125,14 +137,19 @@ impl Ui {
         let selected = Rc::new(RefCell::new(None::<Selected>));
         let request = Rc::new(Cell::new(0u64));
         for snapshot in items {
-            let stamp = glib::DateTime::from_unix_local(snapshot.created)
-                .and_then(|d| d.format("%Y-%m-%d %H:%M:%S"))
-                .map(|s| s.to_string())
-                .unwrap_or_else(|_| snapshot.created.to_string());
-            let button = gtk::Button::with_label(&format!(
-                "{stamp}\n{} bytes · #{}",
-                snapshot.bytes, snapshot.id
-            ));
+            let stamp = shell::when(snapshot.created);
+            let button = gtk::Button::new();
+            button.add_css_class("flat");
+            button.add_css_class("timeline-item");
+            let face = widgets::vbox(1);
+            let t = widgets::label(&stamp, "timeline-when");
+            t.set_xalign(0.0);
+            face.append(&t);
+            let d = widgets::label(&format!("{} bytes · #{}", snapshot.bytes, snapshot.id), "timeline-what");
+            d.set_xalign(0.0);
+            face.append(&d);
+            button.set_child(Some(&face));
+            button.set_tooltip_text(glib::DateTime::from_unix_local(snapshot.created).and_then(|d| d.format("%Y-%m-%d %H:%M:%S")).ok().as_deref());
             let state = nyx_core::paths::state_dir();
             let doc = doc.clone();
             let output = diff.buffer();
@@ -140,7 +157,15 @@ impl Ui {
             let choices = choices.clone();
             let weak = Rc::downgrade(self);
             let request = request.clone();
-            button.connect_clicked(move |_| {
+            button.connect_clicked(move |b| {
+                if let Some(parent) = b.parent() {
+                    let mut c = parent.first_child();
+                    while let Some(w) = c {
+                        w.remove_css_class("on");
+                        c = w.next_sibling();
+                    }
+                }
+                b.add_css_class("on");
                 let path = doc.path.clone();
                 let state = state.clone();
                 let current = doc.editor.text();

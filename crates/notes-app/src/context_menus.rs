@@ -107,6 +107,13 @@ impl Ui {
             },
         );
     }
+    /// Shares the open note, as it is in the editor.
+    pub(super) fn share_active(self: &Rc<Self>) {
+        if let Some(doc) = self.active() {
+            let path = doc.path.clone();
+            self.share(&Target::Note(doc), path);
+        }
+    }
     fn context_action(self: &Rc<Self>, target: &Target, action: &str) {
         let (path, directory) = match target {
             Target::Note(doc) => {
@@ -125,6 +132,7 @@ impl Ui {
                 }
             }
             "rename" => self.move_note(path),
+            "pin" => self.toggle_pin_path(path),
             "duplicate" => self.duplicate_note(path),
             "trash" => self.trash_note(path),
             "copy-path" => Self::copy_path(&path),
@@ -186,6 +194,7 @@ impl Ui {
         match target {
             Target::Note(_) => vec![
                 ("Save", "save"),
+                ("Pin or unpin", "pin"),
                 ("Rename / move…", "rename"),
                 ("Duplicate…", "duplicate"),
                 ("Copy path", "copy-path"),
@@ -215,6 +224,7 @@ impl Ui {
             }
             Target::Path(_, false) => vec![
                 ("Open", "open"),
+                ("Pin or unpin", "pin"),
                 ("Rename / move…", "rename"),
                 ("Duplicate…", "duplicate"),
                 ("Copy path", "copy-path"),

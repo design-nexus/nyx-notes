@@ -281,6 +281,6 @@ impl Ui {
             });
         });
         refresh();
-        window.present();
+        self.show_window_view(&window);
     }
 }
