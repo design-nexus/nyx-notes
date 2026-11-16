@@ -852,6 +852,7 @@ impl Ui {
         side_top.append(&ui.vault_switcher());
         side_top.append(&ui.shell.quick);
         let add_folder = gtk::Button::from_icon_name("list-add-symbolic");
+        add_folder.set_tooltip_text(Some("New folder"));
         let weak = Rc::downgrade(&ui);
         add_folder.connect_clicked(move |_| {
             if let Some(ui) = weak.upgrade() {
