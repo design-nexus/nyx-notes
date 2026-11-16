@@ -19,7 +19,7 @@ fn main() -> glib::ExitCode {
     });
     if std::env::var_os("GSK_RENDERER").is_none() {
         // SAFETY: environment setup precedes all worker threads.
-        unsafe { std::env::set_var("GSK_RENDERER", "ngl") };
+        unsafe { std::env::set_var("GSK_RENDERER", "gl") };
     }
     // NYX_NOTES_APP_ID runs a test copy under its own ID, beside the real one.
     let id = std::env::var("NYX_NOTES_APP_ID")
