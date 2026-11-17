@@ -3542,12 +3542,19 @@ mod tests {
         ui.writing_preferences();
         ui.workspaces();
         ui.history();
-        let windows = ui.window.application().unwrap().windows();
-        let collection = windows
-            .iter()
-            .find(|w| w.title().as_deref() == Some("Collections"))
-            .unwrap();
-        let layout = descendants(collection)
+        // Views are tabs; their (hidden) windows keep only the dialogs, so look in the
+        // Collections tab.
+        let view_page = |found: &dyn Fn(&gtk::Window) -> bool| {
+            ui.shell
+                .view_windows
+                .borrow()
+                .iter()
+                .find(|(w, _)| w.upgrade().is_some_and(|w| found(&w)))
+                .map(|(_, page)| page.clone())
+                .unwrap()
+        };
+        let collection = view_page(&|w| w.title().as_deref() == Some("Collections"));
+        let layout = descendants(&collection)
             .into_iter()
             .filter_map(|w| w.downcast::<gtk::DropDown>().ok())
             .find(|d| d.model().is_some_and(|m| m.n_items() == 4))
@@ -3567,7 +3574,8 @@ mod tests {
         std::fs::write(&path,r#"{"nodes":[{"id":"file","type":"file","file":"Embed.md","x":-300,"y":0,"width":280,"height":200},{"id":"image","type":"file","file":"Attachments/pixel.png","x":10,"y":0,"width":260,"height":200}],"edges":[{"id":"edge","fromNode":"file","toNode":"image","label":"native"}],"extension":"preserve"}"#).unwrap();
         ui.open_canvas(path.clone());
         pump_until(|| ui.canvases.borrow().contains_key(&path));
-        let canvas = ui.canvases.borrow().get(&path).unwrap().0.clone();
+        let canvas_window = ui.canvases.borrow().get(&path).unwrap().0.clone();
+        let canvas = view_page(&|w| w == &canvas_window);
         let buttons = descendants(&canvas)
             .into_iter()
             .filter_map(|w| w.downcast::<gtk::Button>().ok())
@@ -3723,13 +3731,21 @@ mod tests {
         pump_until(|| ui.active().is_some());
         let doc = ui.active().unwrap();
         ui.window.set_default_size(800, 700);
+        // The notebooks' own tabs stay hidden; the strip draws a tab for each, with the
+        // same context menu.
+        let strip_tab = || {
+            descendants(&ui.shell.strip_tabs)
+                .into_iter()
+                .filter_map(|w| w.downcast::<gtk::Label>().ok())
+                .find(|l| l.has_css_class("strip-title") && l.text() == "Project Ideas")
+        };
         pump_until(|| {
-            ui.window.width() == 800 && doc.label.is_mapped() && !doc.label.layout().is_ellipsized()
+            ui.window.width() == 800
+                && strip_tab().is_some_and(|l| l.is_mapped() && !l.layout().is_ellipsized())
         });
         assert_eq!(doc.label.text(), "Project Ideas");
-        assert!(!doc.label.layout().is_ellipsized());
         assert!(gtk::prelude::TextViewExt::extra_menu(&doc.editor.view).is_some());
-        let tab = ui.doc_notebook(&doc).tab_label(&doc.editor.root).unwrap();
+        let tab = strip_tab().unwrap().parent().unwrap();
         let controllers = tab.observe_controllers();
         let gesture = (0..controllers.n_items())
             .filter_map(|i| controllers.item(i).and_downcast::<gtk::GestureClick>())
