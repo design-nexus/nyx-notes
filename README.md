@@ -4,6 +4,8 @@ A native Rust/GTK4 Markdown workspace for Linux and the Nyx suite. Notes opens o
 
 ## Install
 
+On NyxOS, choose Notes in Welcome when you set up, or install it later from the Store or with `nyx install nyx-notes`. On Omarchy:
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/design-nexus/nyx-notes/main/install.sh | bash
 ```
