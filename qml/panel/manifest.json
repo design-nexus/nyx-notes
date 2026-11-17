@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "design-nexus.notes",
+  "name": "Notes",
+  "version": "1.0.0",
+  "author": "Design Nexus",
+  "license": "MIT",
+  "description": "Notes \u00b7 native Nyx quick panel",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Notes",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {},
+    "schema": []
+  }
+}

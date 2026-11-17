@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/notes-app", "crates/notes-editor", "crates/notes-markdown", "crates/notes-vault", "crates/notes-ai", "crates/notes-glimpse", "crates/notes-sync", "crates/notes-plugins"]
+members = ["crates/notes-app", "crates/notes-panel", "crates/notes-editor", "crates/notes-markdown", "crates/notes-vault", "crates/notes-ai", "crates/notes-glimpse", "crates/notes-sync", "crates/notes-plugins"]
 
 [workspace.package]
 edition = "2024"

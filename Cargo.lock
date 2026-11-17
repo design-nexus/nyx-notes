@@ -2300,6 +2300,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nyx-notes-panel"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "blake3",
+ "notes-vault",
+ "serde_json",
+ "tempfile",
+ "toml 1.1.8+spec-1.1.0",
+]
+
+[[package]]
 name = "nyx-peer"
 version = "0.1.0"
 source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"

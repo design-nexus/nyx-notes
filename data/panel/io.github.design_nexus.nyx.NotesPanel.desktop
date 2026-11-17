@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Notes Quick Panel
+Comment=Capture and edit notes in your Notes vault
+Exec=nyx-notes-panel
+Icon=io.github.design_nexus.nyx.Notes
+Terminal=false
+Categories=Utility;TextEditor;
+Keywords=Notes;Capture;Markdown;
