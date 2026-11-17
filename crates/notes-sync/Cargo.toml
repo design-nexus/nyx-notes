@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
-nyx-cloud = { git = "https://github.com/design-nexus/nyx-cloud.git", rev = "657627984e97ecc679f4a79d9a5511a735446476" }
+nyx-cloud = { git = "https://github.com/design-nexus/nyx-cloud.git", rev = "a65d14cce64bc0cbce1a8ecfa711fae8a0290835" }
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true
