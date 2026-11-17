@@ -3832,20 +3832,8 @@ mod tests {
         ui.settings();
         let page = nyx_ui::settings_card::page().unwrap();
         pump_until(|| page.is_mapped() && page.height() > 200);
-        let theme = descendants(&page)
-            .into_iter()
-            .filter_map(|w| w.downcast::<gtk::DropDown>().ok())
-            .find(|w| w.widget_name() == "notes-theme")
-            .unwrap();
-        pump_until(|| theme.is_mapped() && theme.height() > 0);
-        let themes = nyx_theme::all();
-        let other = themes
-            .iter()
-            .position(|t| t.id != prefs::get().theme)
-            .unwrap();
-        theme.set_selected(other as u32);
-        assert_eq!(prefs::get().theme, themes[other].id);
-        assert_eq!(prefs::get().mode, nyx_theme::ThemeMode::Theme);
+        // Appearance is the suite's standard group (nyx-design's settings_card), which
+        // gives the app its theme through the theme service; it's tested there.
         nyx_ui::settings_card::select("Editor");
         let size = descendants(&page)
             .into_iter()
