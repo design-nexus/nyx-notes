@@ -19,15 +19,42 @@ pub(super) fn tools() -> Value {
 /// app. Notes answers while it runs; its permissions and review still decide.
 pub(super) fn description(app_id: &str) -> Value {
     let meta = [
-        ("notes.vault_proposal_status", json!({"risk": "read_only", "result": "object"})),
-        ("notes.vault_status", json!({"risk": "read_only", "aliases": ["status"], "result": "object"})),
-        ("notes.vault_search", json!({"risk": "read_only", "aliases": ["find"], "positional": ["query"], "result": "object"})),
-        ("notes.vault_read", json!({"risk": "read_only", "aliases": ["read"], "positional": ["note"], "result": "object"})),
-        ("notes.vault_open", json!({"risk": "writes", "confirmation": "never", "aliases": ["note"], "positional": ["note"], "result": "none"})),
-        ("notes.vault_create", json!({"icon": "document-new-symbolic", "risk": "writes", "aliases": ["new"], "positional": ["title", "text"], "result": "object"})),
-        ("notes.vault_append", json!({"risk": "writes", "aliases": ["append"], "positional": ["note", "text"], "result": "object"})),
-        ("notes.vault_replace", json!({"risk": "writes", "result": "object"})),
-        ("notes.clip", json!({"icon": "web-browser-symbolic", "risk": "writes", "result": "object"})),
+        (
+            "notes.vault_proposal_status",
+            json!({"risk": "read_only", "result": "object"}),
+        ),
+        (
+            "notes.vault_status",
+            json!({"risk": "read_only", "aliases": ["status"], "result": "object"}),
+        ),
+        (
+            "notes.vault_search",
+            json!({"risk": "read_only", "aliases": ["find"], "positional": ["query"], "result": "object"}),
+        ),
+        (
+            "notes.vault_read",
+            json!({"risk": "read_only", "aliases": ["read"], "positional": ["note"], "result": "object"}),
+        ),
+        (
+            "notes.vault_open",
+            json!({"risk": "writes", "confirmation": "never", "aliases": ["note"], "positional": ["note"], "result": "none"}),
+        ),
+        (
+            "notes.vault_create",
+            json!({"icon": "document-new-symbolic", "risk": "writes", "aliases": ["new"], "positional": ["title", "text"], "result": "object"}),
+        ),
+        (
+            "notes.vault_append",
+            json!({"risk": "writes", "aliases": ["append"], "positional": ["note", "text"], "result": "object"}),
+        ),
+        (
+            "notes.vault_replace",
+            json!({"risk": "writes", "result": "object"}),
+        ),
+        (
+            "notes.clip",
+            json!({"icon": "web-browser-symbolic", "risk": "writes", "result": "object"}),
+        ),
     ];
     let mut list = tools();
     for t in list.as_array_mut().into_iter().flatten() {
@@ -811,7 +838,11 @@ impl Ui {
 mod description_tests {
     #[test]
     fn the_description_is_api_2() {
-        let d = nyx_actions::Description::from_value(&super::description("io.github.design_nexus.nyx.Notes"), None).unwrap();
+        let d = nyx_actions::Description::from_value(
+            &super::description("io.github.design_nexus.nyx.Notes"),
+            None,
+        )
+        .unwrap();
         assert!(d.actions.iter().all(|a| !a.asks()));
         assert_eq!(d.app.panel.as_ref().map(|p| p.id.as_str()), Some("notes"));
     }

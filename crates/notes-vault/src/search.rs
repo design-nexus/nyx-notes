@@ -315,14 +315,22 @@ pub fn note_list(db: &Path, root: &Path) -> Result<Vec<Listed>> {
         "SELECT s.path, s.modified, substr(n.body, 1, 900) FROM stamps s JOIN notes n ON n.rowid = s.fts_rowid ORDER BY s.modified DESC",
     )?;
     let rows = statement.query_map([], |row| {
-        Ok((row.get::<_, String>(0)?, row.get::<_, i64>(1)?, row.get::<_, String>(2)?))
+        Ok((
+            row.get::<_, String>(0)?,
+            row.get::<_, i64>(1)?,
+            row.get::<_, String>(2)?,
+        ))
     })?;
     let mut out = Vec::new();
     for row in rows {
         let (path, modified, body) = row?;
         let path = PathBuf::from(path);
         if path.starts_with(root) {
-            out.push(Listed { path, modified, snippet: opening(&body) });
+            out.push(Listed {
+                path,
+                modified,
+                snippet: opening(&body),
+            });
         }
     }
     Ok(out)
@@ -365,8 +373,15 @@ fn opening(body: &str) -> String {
     {
         text = rest[end + 4..].trim_start_matches(['-', '\n', '\r']);
     }
-    let mut lines = text.lines().map(str::trim).filter(|l| !l.is_empty()).peekable();
-    if lines.peek().is_some_and(|l| l.starts_with('#') && !l.starts_with("#[")) {
+    let mut lines = text
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .peekable();
+    if lines
+        .peek()
+        .is_some_and(|l| l.starts_with('#') && !l.starts_with("#["))
+    {
         lines.next();
     }
     let mut out = String::new();
@@ -374,7 +389,10 @@ fn opening(body: &str) -> String {
         if line.starts_with("|") || line.starts_with("```") {
             continue;
         }
-        let line = line.trim_start_matches(['#', '>', '-', '*', ' ']).trim_start_matches("[ ] ").trim_start_matches("[x] ");
+        let line = line
+            .trim_start_matches(['#', '>', '-', '*', ' '])
+            .trim_start_matches("[ ] ")
+            .trim_start_matches("[x] ");
         // A callout's marker ("[!info] Decision") goes; its title stays.
         let line = match line.strip_prefix("[!").and_then(|l| l.split_once(']')) {
             Some((_, title)) => title.trim_start(),

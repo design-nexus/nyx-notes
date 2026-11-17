@@ -12,7 +12,9 @@ impl Ui {
         self.nav.set_visible(!p.focus_mode);
         // The tabs are the strip's (the notebooks' own stay hidden); focus mode hides it
         // and the note list.
-        self.shell.strip.set_visible(!p.focus_mode && !self.shell.welcome.get());
+        self.shell
+            .strip
+            .set_visible(!p.focus_mode && !self.shell.welcome.get());
         self.fit_list();
         if p.focus_mode {
             self.inspector.escape();
@@ -96,8 +98,18 @@ impl Ui {
         if let Some(b) = dialog.buttons.last_child() {
             b.add_css_class("suggested-action");
         }
-        let name = doc.path.file_stem().unwrap_or_default().to_string_lossy().into_owned();
-        dialog.dock(self, "History", "history-symbolic", &format!("History of <b>{}</b>", glib::markup_escape_text(&name)));
+        let name = doc
+            .path
+            .file_stem()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .into_owned();
+        dialog.dock(
+            self,
+            "History",
+            "history-symbolic",
+            &format!("History of <b>{}</b>", glib::markup_escape_text(&name)),
+        );
         let panes = gtk::Paned::new(gtk::Orientation::Horizontal);
         panes.set_vexpand(true);
         let revisions = widgets::vbox(2);
@@ -124,7 +136,10 @@ impl Ui {
         panes.set_start_child(Some(&scroll(&revisions)));
         panes.set_end_child(Some(&right));
         panes.set_position(230);
-        let note = widgets::label("Red is the note now, green the version you picked. Restoring changes the editor; Undo takes it back.", "history-note");
+        let note = widgets::label(
+            "Red is the note now, green the version you picked. Restoring changes the editor; Undo takes it back.",
+            "history-note",
+        );
         note.set_wrap(true);
         note.set_xalign(0.0);
         right.prepend(&note);
@@ -145,11 +160,19 @@ impl Ui {
             let t = widgets::label(&stamp, "timeline-when");
             t.set_xalign(0.0);
             face.append(&t);
-            let d = widgets::label(&format!("{} bytes · #{}", snapshot.bytes, snapshot.id), "timeline-what");
+            let d = widgets::label(
+                &format!("{} bytes · #{}", snapshot.bytes, snapshot.id),
+                "timeline-what",
+            );
             d.set_xalign(0.0);
             face.append(&d);
             button.set_child(Some(&face));
-            button.set_tooltip_text(glib::DateTime::from_unix_local(snapshot.created).and_then(|d| d.format("%Y-%m-%d %H:%M:%S")).ok().as_deref());
+            button.set_tooltip_text(
+                glib::DateTime::from_unix_local(snapshot.created)
+                    .and_then(|d| d.format("%Y-%m-%d %H:%M:%S"))
+                    .ok()
+                    .as_deref(),
+            );
             let state = nyx_core::paths::state_dir();
             let doc = doc.clone();
             let output = diff.buffer();

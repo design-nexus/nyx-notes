@@ -39,7 +39,11 @@ fn main() -> glib::ExitCode {
             window::integration_call(
                 &request.action,
                 request.arguments,
-                Box::new(move |r| answer(r.map_err(|e| nyx_actions::Error::new(nyx_actions::ErrorKind::Failed, e)))),
+                Box::new(move |r| {
+                    answer(
+                        r.map_err(|e| nyx_actions::Error::new(nyx_actions::ErrorKind::Failed, e)),
+                    )
+                }),
             );
         });
     });

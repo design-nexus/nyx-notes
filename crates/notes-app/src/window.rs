@@ -504,7 +504,11 @@ impl Ui {
         let info = inspector.segment("Info");
         let section = info.section("This note");
         shell::retitle(&section, "This note");
-        let stats = gtk::Grid::builder().row_spacing(8).column_spacing(8).column_homogeneous(true).build();
+        let stats = gtk::Grid::builder()
+            .row_spacing(8)
+            .column_spacing(8)
+            .column_homogeneous(true)
+            .build();
         for i in 0..4 {
             let tile = widgets::vbox(2);
             tile.add_css_class("info-tile");
@@ -859,9 +863,15 @@ impl Ui {
                 ui.new_folder();
             }
         });
-        side_top.append(&shell::group("Folders", nyx_ui::sidebar::ACCENT_SECTION, Some(("New folder", add_folder))));
+        side_top.append(&shell::group(
+            "Folders",
+            nyx_ui::sidebar::ACCENT_SECTION,
+            Some(("New folder", add_folder)),
+        ));
         ui.header.end.append(&ui.grouped_menu());
-        ui.header.end.append(&nyx_ui::chrome::settings_button(settings));
+        ui.header
+            .end
+            .append(&nyx_ui::chrome::settings_button(settings));
         welcome_slot.append(&ui.welcome_card());
         ui.format_bar();
         #[cfg(feature = "ai")]
@@ -1150,8 +1160,16 @@ impl Ui {
         self.fit_list();
         // Without room for the note beside it, the inspector steps aside (as at 800 px
         // in the mockup) and comes back when there is; neither is saved as a choice.
-        let side = if self.nav.is_visible() { self.nav.width().max(SIDEBAR) } else { 0 };
-        let list = if self.shell.list_root.is_visible() { 280 } else { 0 };
+        let side = if self.nav.is_visible() {
+            self.nav.width().max(SIDEBAR)
+        } else {
+            0
+        };
+        let list = if self.shell.list_root.is_visible() {
+            280
+        } else {
+            0
+        };
         let room = width - side - list - 24;
         let aside = room < 430 + 268;
         let s = &self.shell;
@@ -1385,9 +1403,10 @@ impl Ui {
                                     }
                                 });
                                 ui.explorer_context(&expander, entry.path.clone(), true);
-                                ui.tree_folders
-                                    .borrow_mut()
-                                    .insert(entry.path.clone(), row.clone().upcast::<gtk::Widget>().downgrade());
+                                ui.tree_folders.borrow_mut().insert(
+                                    entry.path.clone(),
+                                    row.clone().upcast::<gtk::Widget>().downgrade(),
+                                );
                                 let click = gtk::GestureClick::new();
                                 let (weak, folder) = (Rc::downgrade(&ui), entry.path.clone());
                                 click.connect_released(move |_, _, _, _| {
@@ -1712,7 +1731,10 @@ impl Ui {
         doc.editor.buffer.connect_has_selection_notify(move |_| f());
         let f = follow.clone();
         doc.editor.buffer.connect_mark_set(move |b, _, mark| {
-            if b.has_selection() && (mark.name().as_deref() == Some("insert") || mark.name().as_deref() == Some("selection_bound")) {
+            if b.has_selection()
+                && (mark.name().as_deref() == Some("insert")
+                    || mark.name().as_deref() == Some("selection_bound"))
+            {
                 f();
             }
         });
@@ -2098,8 +2120,21 @@ impl Ui {
                 let dialog = Prompt::new(&ui.window, "Resolve external changes", "", "", 760, 500);
                 dialog.add_button("Cancel", gtk::ResponseType::Cancel);
                 dialog.add_button("Keep both", gtk::ResponseType::Other(1));
-                let name = doc.path.file_stem().unwrap_or_default().to_string_lossy().into_owned();
-                dialog.dock(&ui, &name, "dialog-warning-symbolic", &format!("<b>{}</b> · changed on disk", glib::markup_escape_text(&name)));
+                let name = doc
+                    .path
+                    .file_stem()
+                    .unwrap_or_default()
+                    .to_string_lossy()
+                    .into_owned();
+                dialog.dock(
+                    &ui,
+                    &name,
+                    "dialog-warning-symbolic",
+                    &format!(
+                        "<b>{}</b> · changed on disk",
+                        glib::markup_escape_text(&name)
+                    ),
+                );
                 let reviewed_revision = doc.editor.revision.get();
                 let banner = widgets::hbox(12);
                 banner.add_css_class("conflict-banner");
@@ -2110,7 +2145,10 @@ impl Ui {
                 let t = widgets::label("This note changed here and on disk", "conflict-title");
                 t.set_xalign(0.0);
                 words.append(&t);
-                let d = widgets::label("Choose what to keep; the other version stays in History.", "conflict-text");
+                let d = widgets::label(
+                    "Choose what to keep; the other version stays in History.",
+                    "conflict-text",
+                );
                 d.set_xalign(0.0);
                 words.append(&d);
                 banner.append(&words);
@@ -2136,11 +2174,20 @@ impl Ui {
                     .map(|t| shell::when(t.as_secs() as i64))
                     .unwrap_or_default();
                 for (title, when, text, response, primary) in [
-                    ("In the editor", "your edits".to_string(), doc.editor.text(), gtk::ResponseType::Other(2), true),
+                    (
+                        "In the editor",
+                        "your edits".to_string(),
+                        doc.editor.text(),
+                        gtk::ResponseType::Other(2),
+                        true,
+                    ),
                     (
                         "On disk",
                         disk_time,
-                        result.as_ref().map(|d| d.text.clone()).unwrap_or_else(|e| format!("Disk note unavailable: {e:#}")),
+                        result
+                            .as_ref()
+                            .map(|d| d.text.clone())
+                            .unwrap_or_else(|e| format!("Disk note unavailable: {e:#}")),
                         gtk::ResponseType::Accept,
                         false,
                     ),
@@ -2155,7 +2202,11 @@ impl Ui {
                     spacer.set_hexpand(true);
                     head.append(&spacer);
                     let keep = gtk::Button::with_label("Keep this");
-                    keep.set_tooltip_text(Some(if primary { "Write your edits over the disk version" } else { "Use the disk version" }));
+                    keep.set_tooltip_text(Some(if primary {
+                        "Write your edits over the disk version"
+                    } else {
+                        "Use the disk version"
+                    }));
                     if primary {
                         keep.add_css_class("suggested-action");
                     }
@@ -2510,7 +2561,10 @@ impl Ui {
         self.update_info(false);
         let Some(doc) = self.active() else { return };
         let (words, _) = doc.editor.statistics();
-        let cursor = doc.editor.buffer.iter_at_offset(doc.editor.buffer.cursor_position());
+        let cursor = doc
+            .editor
+            .buffer
+            .iter_at_offset(doc.editor.buffer.cursor_position());
         self.status.set_text(&format!(
             "{} words\u{2003}{} min read\u{2003}Ln {}, Col {}",
             thousands(words),
@@ -2550,7 +2604,10 @@ impl Ui {
                 replace_strings(
                     &self.outline_model,
                     headings.iter().map(|(text, _, level)| {
-                        format!("{}{text}", "\u{2003}".repeat(level.saturating_sub(1) as usize))
+                        format!(
+                            "{}{text}",
+                            "\u{2003}".repeat(level.saturating_sub(1) as usize)
+                        )
                     }),
                 );
                 *self.outline_offsets.borrow_mut() =
@@ -2691,7 +2748,10 @@ impl Ui {
                             }),
                         );
                         if let Some(heading) = &ui.backlinks_heading {
-                            heading.set_markup(&format!("Backlinks <span fgalpha=\"55%\">{}</span>", links.len()));
+                            heading.set_markup(&format!(
+                                "Backlinks <span fgalpha=\"55%\">{}</span>",
+                                links.len()
+                            ));
                         }
                         if links.is_empty() {
                             replace_strings(&ui.backlinks_model, ["No backlinks".to_owned()]);
@@ -2950,8 +3010,14 @@ const INDENT: i32 = 16;
 fn link_line(text: &str, offset: usize) -> Option<String> {
     let offset = offset.min(text.len());
     let start = text.get(..offset)?.rfind('\n').map_or(0, |n| n + 1);
-    let end = text.get(offset..)?.find('\n').map_or(text.len(), |n| offset + n);
-    let line = text.get(start..end)?.trim().trim_start_matches(['-', '*', '#', '>', ' ']);
+    let end = text
+        .get(offset..)?
+        .find('\n')
+        .map_or(text.len(), |n| offset + n);
+    let line = text
+        .get(start..end)?
+        .trim()
+        .trim_start_matches(['-', '*', '#', '>', ' ']);
     Some(vault::plain(line))
 }
 
@@ -3180,7 +3246,9 @@ impl Prompt {
     /// Shows it as a tab rather than a window: its heading (`crumb`, markup) and
     /// buttons become the tab's bar, and the tab's × answers Cancel.
     fn dock(self: &Rc<Self>, ui: &Rc<Ui>, tab: &str, icon: &str, crumb: &str) {
-        let Some(layout) = self.window.child().and_downcast::<gtk::Box>() else { return };
+        let Some(layout) = self.window.child().and_downcast::<gtk::Box>() else {
+            return;
+        };
         self.window.set_child(gtk::Widget::NONE);
         layout.add_css_class("docked-review");
         layout.set_margin_top(0);

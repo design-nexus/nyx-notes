@@ -872,10 +872,12 @@ impl Editor {
         };
         for (range, level) in &parsed.heading_lines {
             let tag = &self.layout.headings[(*level as usize).clamp(1, 3) - 1];
-            self.buffer.apply_tag(tag, &iter(range.start), &line_end(range.start));
+            self.buffer
+                .apply_tag(tag, &iter(range.start), &line_end(range.start));
         }
         for at in &parsed.blank_lines {
-            self.buffer.apply_tag(&self.layout.blank, &iter(*at), &iter(*at + 1));
+            self.buffer
+                .apply_tag(&self.layout.blank, &iter(*at), &iter(*at + 1));
         }
         for span in parsed.spans.iter().filter(|s| s.kind == Kind::CodeBlock) {
             self.buffer.apply_tag(
@@ -885,15 +887,27 @@ impl Editor {
             );
         }
         for task in &parsed.task_marks {
-            self.buffer
-                .apply_tag(&self.layout.task, &iter(task.bullet.start), &line_end(task.bullet.start));
-            self.buffer
-                .apply_tag(&self.layout.bullet, &iter(task.bullet.start), &iter(task.bullet.end));
-            self.buffer
-                .apply_tag(&self.layout.check, &iter(task.check.start), &iter(task.check.end));
+            self.buffer.apply_tag(
+                &self.layout.task,
+                &iter(task.bullet.start),
+                &line_end(task.bullet.start),
+            );
+            self.buffer.apply_tag(
+                &self.layout.bullet,
+                &iter(task.bullet.start),
+                &iter(task.bullet.end),
+            );
+            self.buffer.apply_tag(
+                &self.layout.check,
+                &iter(task.check.start),
+                &iter(task.check.end),
+            );
             if task.checked {
-                self.buffer
-                    .apply_tag(&self.layout.done, &iter(task.text.start), &iter(task.text.end));
+                self.buffer.apply_tag(
+                    &self.layout.done,
+                    &iter(task.text.start),
+                    &iter(task.text.end),
+                );
             }
         }
         self.fill_chips(parsed);
@@ -901,15 +915,22 @@ impl Editor {
             && !self.editing_properties.get()
             && self.chips.first_child().is_some()
         {
-            self.buffer
-                .apply_tag(&self.layout.hidden_properties, &iter(range.start), &iter(range.end));
+            self.buffer.apply_tag(
+                &self.layout.hidden_properties,
+                &iter(range.start),
+                &iter(range.end),
+            );
             // Typing must never land in hidden text.
             if self.buffer.cursor_position() < range.end && !self.buffer.has_selection() {
                 self.buffer.place_cursor(&iter(range.end));
             }
             // The chips go under the title when the note starts with one, else above
             // the first line.
-            let blanks = parsed.blank_lines.iter().filter(|b| **b >= range.end).count();
+            let blanks = parsed
+                .blank_lines
+                .iter()
+                .filter(|b| **b >= range.end)
+                .count();
             let mut first = iter(range.end);
             for _ in 0..blanks {
                 if first.ends_line() && first.starts_line() {
@@ -923,8 +944,12 @@ impl Editor {
                 .iter()
                 .find(|(r, l)| *l == 1 && r.start == first.offset())
                 .is_some();
-            self.layout.chip_room.set_pixels_below_lines(if title { CHIP_ROOM } else { 0 });
-            self.layout.chip_room.set_pixels_above_lines(if title { 0 } else { CHIP_ROOM });
+            self.layout
+                .chip_room
+                .set_pixels_below_lines(if title { CHIP_ROOM } else { 0 });
+            self.layout
+                .chip_room
+                .set_pixels_above_lines(if title { 0 } else { CHIP_ROOM });
             self.buffer
                 .apply_tag(&self.layout.chip_room, &first, &line_end(first.offset()));
             self.chips.set_visible(true);
@@ -968,8 +993,8 @@ impl Editor {
             chip(None, &format!("#{tag}"), true);
         }
         if self.chips.first_child().is_some()
-            && let Ok(modified) = std::fs::metadata(&*self.source_path.borrow())
-                .and_then(|m| m.modified())
+            && let Ok(modified) =
+                std::fs::metadata(&*self.source_path.borrow()).and_then(|m| m.modified())
             && let Ok(since) = modified.duration_since(std::time::UNIX_EPOCH)
             && let Ok(when) = glib::DateTime::from_unix_local(since.as_secs() as i64)
             && let Ok(now) = glib::DateTime::now_local()
@@ -1024,10 +1049,14 @@ impl Editor {
                     }
                     let text = buffer.text(&buffer.start_iter(), &buffer.end_iter(), true);
                     if let Some(edit) = notes_markdown::editing::toggle_task(&text, at.get()) {
-                        let mut a = buffer
-                            .iter_at_offset(notes_markdown::character_offset(&text, edit.range.start));
-                        let mut b = buffer
-                            .iter_at_offset(notes_markdown::character_offset(&text, edit.range.end));
+                        let mut a = buffer.iter_at_offset(notes_markdown::character_offset(
+                            &text,
+                            edit.range.start,
+                        ));
+                        let mut b = buffer.iter_at_offset(notes_markdown::character_offset(
+                            &text,
+                            edit.range.end,
+                        ));
                         buffer.begin_user_action();
                         buffer.delete(&mut a, &mut b);
                         buffer.insert(&mut a, &edit.replacement);
@@ -1050,9 +1079,11 @@ impl Editor {
             let mut start = self.buffer.iter_at_offset(task.bullet.start);
             start.set_line_offset(0);
             let rect = self.view.iter_location(&start);
-            let spaces = self
-                .buffer
-                .text(&start, &self.buffer.iter_at_offset(task.bullet.start), false);
+            let spaces = self.buffer.text(
+                &start,
+                &self.buffer.iter_at_offset(task.bullet.start),
+                false,
+            );
             let lead = if spaces.is_empty() {
                 0
             } else {
@@ -1221,9 +1252,14 @@ impl Editor {
 
 impl Layout {
     /// The line carrying the chips' room, as (start, start).
-    fn chip_room_range(&self, buffer: &sourceview5::Buffer) -> Option<(gtk::TextIter, gtk::TextIter)> {
+    fn chip_room_range(
+        &self,
+        buffer: &sourceview5::Buffer,
+    ) -> Option<(gtk::TextIter, gtk::TextIter)> {
         let mut iter = buffer.start_iter();
-        if !iter.starts_tag(Some(&self.chip_room)) && !iter.forward_to_tag_toggle(Some(&self.chip_room)) {
+        if !iter.starts_tag(Some(&self.chip_room))
+            && !iter.forward_to_tag_toggle(Some(&self.chip_room))
+        {
             return None;
         }
         Some((iter, iter))

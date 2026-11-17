@@ -90,15 +90,31 @@ impl Ui {
                 let mut content = Content::new();
                 match text {
                     Some(text) => {
-                        let name = path.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_else(|| "Note.md".into());
-                        content.bytes(ContentKind::File, &name, Some("text/markdown"), text.as_bytes()).map_err(|e| e.to_string())?;
+                        let name = path
+                            .file_name()
+                            .map(|n| n.to_string_lossy().into_owned())
+                            .unwrap_or_else(|| "Note.md".into());
+                        content
+                            .bytes(
+                                ContentKind::File,
+                                &name,
+                                Some("text/markdown"),
+                                text.as_bytes(),
+                            )
+                            .map_err(|e| e.to_string())?;
                     }
                     None => {
                         content.file(&path).map_err(|e| e.to_string())?;
                     }
                 }
-                let options = ShareOptions { app_name: Some("Notes".into()), ..Default::default() };
-                Client::connect().and_then(|c| c.share(&content, &options)).map(|_| ()).map_err(|e| e.to_string())
+                let options = ShareOptions {
+                    app_name: Some("Notes".into()),
+                    ..Default::default()
+                };
+                Client::connect()
+                    .and_then(|c| c.share(&content, &options))
+                    .map(|_| ())
+                    .map_err(|e| e.to_string())
             },
             move |result: Result<(), String>| {
                 if let (Err(e), Some(ui)) = (result, weak.upgrade()) {

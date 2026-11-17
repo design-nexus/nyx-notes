@@ -448,7 +448,8 @@ mod tests {
     use super::*;
     #[test]
     fn live_layout_marks_headings_blank_lines_and_tasks() {
-        let source = "---\ntitle: é\n---\n# Tïtle\n\nText\n\n- [x] Done\n  - [ ] Open\n```\n\n```\n";
+        let source =
+            "---\ntitle: é\n---\n# Tïtle\n\nText\n\n- [x] Done\n  - [ ] Open\n```\n\n```\n";
         let parsed = parse(source);
         let chars = |r: &Range<i32>| {
             source

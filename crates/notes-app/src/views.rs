@@ -106,7 +106,10 @@ impl Ui {
                 }
             }),
         );
-        self.shell.view_windows.borrow_mut().push((window.downgrade(), root.clone().upcast()));
+        self.shell
+            .view_windows
+            .borrow_mut()
+            .push((window.downgrade(), root.clone().upcast()));
         let (weak, page) = (Rc::downgrade(self), root.downgrade());
         window.connect_destroy(move |_| {
             if let (Some(ui), Some(page)) = (weak.upgrade(), page.upgrade()) {
