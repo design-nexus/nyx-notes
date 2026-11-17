@@ -111,13 +111,37 @@ impl Ui {
             .borrow_mut()
             .push((window.downgrade(), root.clone().upcast()));
         let (weak, page) = (Rc::downgrade(self), root.downgrade());
-        window.connect_destroy(move |_| {
+        when_gone(&window, move || {
             if let (Some(ui), Some(page)) = (weak.upgrade(), page.upgrade()) {
                 ui.close_view(page.upcast_ref());
             }
         });
         (window, root, toolbar)
     }
+}
+/// Runs `done` once, when `window` is destroyed. GTK's "destroy" only comes once nothing
+/// holds the window, and a view (Collections, a canvas) keeps its own; leaving the
+/// application is part of every destroy, so that counts as well.
+pub(super) fn when_gone(window: &gtk::Window, done: impl FnOnce() + 'static) {
+    let done = RefCell::new(Some(done));
+    let run: Rc<dyn Fn()> = Rc::new(move || {
+        if let Some(done) = done.borrow_mut().take() {
+            done();
+        }
+    });
+    if let Some(app) = window.application() {
+        let (w, run, handler) = (window.downgrade(), run.clone(), Rc::new(Cell::new(None)));
+        let h = handler.clone();
+        handler.set(Some(app.connect_window_removed(move |app, removed| {
+            if w.upgrade().is_none_or(|w| &w == removed) {
+                if let Some(id) = h.take() {
+                    app.disconnect(id);
+                }
+                run();
+            }
+        })));
+    }
+    window.connect_destroy(move |_| run());
 }
 pub(super) fn pan_zoom(area: &gtk::DrawingArea, camera: Rc<Cell<Camera>>) {
     let drag = gtk::GestureDrag::new();

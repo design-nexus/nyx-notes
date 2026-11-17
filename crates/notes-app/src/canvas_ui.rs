@@ -1292,7 +1292,7 @@ impl Ui {
             .borrow_mut()
             .insert(path.clone(), (window.clone(), view.dirty.clone()));
         let keep = RefCell::new(Some(view.clone()));
-        window.connect_destroy(move |_| {
+        super::views::when_gone(&window, move || {
             if let Some(v) = keep.borrow_mut().take() {
                 for timer in [&v.save_timer, &v.draft_timer] {
                     if let Some(t) = timer.borrow_mut().take() {
