@@ -20,7 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/design-nexus/nyx-notes/main/install
 - File attachments through the picker or drag/drop, clipboard image insertion, native image previews, and explicit attachment opening. Existing attachment names are never overwritten.
 - Reviewed rename/move operations update affected source link ranges and retain recovery journals. Duplicate files/folders or move them to the desktop trash through explorer actions.
 - Explicit save, autosave, recovery drafts, external modification checks, conflict comparison, and atomic save-copy without overwriting existing files.
-- Shared Nyx controls and Inspector, configurable typography/writing width, light/dark palettes, and automatic Omarchy theme following.
+- Shared Nyx controls and Inspector, configurable typography/writing width, light/dark palettes, and following the desktop theme.
 
 Phase 3 is available through the File menu:
 
@@ -44,7 +44,7 @@ Reading mode is a derived native view, not an HTML browser. Inline note/image em
 
 ## Build and install
 
-Requires Rust, GTK4 >= 4.18, and GtkSourceView 5. On Arch Linux the native packages are `gtk4` and `gtksourceview5`.
+On NyxOS, nyx-packages builds Notes; build it yourself only to work on it. Requires Rust, GTK4 >= 4.18, and GtkSourceView 5. On Arch Linux the native packages are `gtk4` and `gtksourceview5`.
 
 ```sh
 cargo build --release --locked -p nyx-notes
