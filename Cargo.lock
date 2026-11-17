@@ -13,6 +13,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "aes"
+version = "0.9.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc0fc36d7440d015b45468ba08a21e80e056ebbd014c611c6298bb7503e04bd1"
+dependencies = [
+ "cipher 0.5.2",
+ "cpubits",
+ "cpufeatures 0.3.1",
+]
+
+[[package]]
 name = "age"
 version = "0.11.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -23,7 +34,7 @@ dependencies = [
  "bech32",
  "chacha20poly1305",
  "cookie-factory",
- "hmac",
+ "hmac 0.12.1",
  "i18n-embed",
  "i18n-embed-fl",
  "lazy_static",
@@ -47,7 +58,7 @@ dependencies = [
  "base64 0.21.7",
  "chacha20poly1305",
  "cookie-factory",
- "hkdf",
+ "hkdf 0.12.4",
  "io_tee",
  "nom",
  "rand 0.8.8",
@@ -76,6 +87,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c982642fa9e8606056828ee9a8505737230110bb1099153c79efe865c59d12ba"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "android_system_properties"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae221649c9976a6f6c56ae1facf410f3ddb33cc661c4b7b61020a912d4237fbc"
+dependencies = [
+ "libc",
 ]
 
 [[package]]
@@ -334,6 +354,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "block-padding"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "710f1dd022ef4e93f8a438b4ba958de7f64308434fa6a87104481645cc30068b"
+dependencies = [
+ "hybrid-array",
+]
+
+[[package]]
 name = "blocking"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -404,6 +433,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "cbc"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ce2dc9ee5f88d11e0beb842c88b33c8a5cf0d1329c4b19494af42b07dbfe8896"
+dependencies = [
+ "cipher 0.5.2",
+]
+
+[[package]]
 name = "cc"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -442,7 +480,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c3613f74bd2eac03dad61bd53dbe620703d4371614fe0bc3b9f04dd36fe4e818"
 dependencies = [
  "cfg-if",
- "cipher",
+ "cipher 0.4.4",
  "cpufeatures 0.2.17",
 ]
 
@@ -465,9 +503,23 @@ checksum = "10cd79432192d1c0f4e1a0fef9527696cc039165d729fb41b3f4f4f354c2dc35"
 dependencies = [
  "aead",
  "chacha20 0.9.1",
- "cipher",
+ "cipher 0.4.4",
  "poly1305",
  "zeroize",
+]
+
+[[package]]
+name = "chrono"
+version = "0.4.45"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aa79e62e7697b8e29b513a68abacf485adcd1fe8284a4316c5ae868e6633327"
+dependencies = [
+ "iana-time-zone",
+ "js-sys",
+ "num-traits",
+ "serde",
+ "wasm-bindgen",
+ "windows-link",
 ]
 
 [[package]]
@@ -477,9 +529,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "773f3b9af64447d2ce9850330c473515014aa235e6a783b02db81ff39e4a3dad"
 dependencies = [
  "crypto-common 0.1.7",
- "inout",
+ "inout 0.1.4",
  "zeroize",
 ]
+
+[[package]]
+name = "cipher"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e8cf2a2c93cd704877c0858356ed03480ff301ee950b43f1cbe4573b088bfa6c"
+dependencies = [
+ "crypto-common 0.2.2",
+ "inout 0.2.6",
+]
+
+[[package]]
+name = "cmov"
+version = "0.5.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c9ea0ac24bc397ab3c98583a3c9ba74fa56b09a4449bbe172b9b1ddb016027a"
 
 [[package]]
 name = "concurrent-queue"
@@ -510,6 +578,28 @@ checksum = "9885fa71e26b8ab7855e2ec7cae6e9b380edff76cd052e07c683a0319d51b3a2"
 dependencies = [
  "futures",
 ]
+
+[[package]]
+name = "core-foundation"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b2a6cd9ae233e7f62ba4e9353e81a88df7fc8a5987b8d445b4d90c879bd156f6"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
+]
+
+[[package]]
+name = "core-foundation-sys"
+version = "0.8.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+
+[[package]]
+name = "cpubits"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15b85f9c39137c3a891689859392b1bd49812121d0d61c9caf00d46ed5ce06ae"
 
 [[package]]
 name = "cpufeatures"
@@ -552,6 +642,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453"
 dependencies = [
  "hybrid-array",
+]
+
+[[package]]
+name = "ctutils"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "261af4dc7a06ea8a527a8717d8cbba3417530d6ea14e1edb3de6b67806be474f"
+dependencies = [
+ "cmov",
 ]
 
 [[package]]
@@ -600,6 +699,7 @@ dependencies = [
  "block-buffer 0.12.1",
  "const-oid",
  "crypto-common 0.2.2",
+ "ctutils",
 ]
 
 [[package]]
@@ -1327,7 +1427,16 @@ version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7b5f8eb2ad728638ea2c7d47a21db23b7b58a72ed6a38256b8a1849f15fbbdf7"
 dependencies = [
- "hmac",
+ "hmac 0.12.1",
+]
+
+[[package]]
+name = "hkdf"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4aaa26c720c68b866f2c96ef5c1264b3e6f473fe5d4ce61cd44bbe913e553018"
+dependencies = [
+ "hmac 0.13.0",
 ]
 
 [[package]]
@@ -1337,6 +1446,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6c49c37c09c17a53d937dfbb742eb3a961d65a994e6bcdcf37e7399d0cc8ab5e"
 dependencies = [
  "digest 0.10.7",
+]
+
+[[package]]
+name = "hmac"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
+dependencies = [
+ "digest 0.11.3",
 ]
 
 [[package]]
@@ -1416,6 +1534,7 @@ dependencies = [
  "hyper",
  "hyper-util",
  "rustls",
+ "rustls-native-certs",
  "tokio",
  "tokio-rustls",
  "tower-service",
@@ -1510,6 +1629,30 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "iana-time-zone"
+version = "0.1.65"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e31bc9ad994ba00e440a8aa5c9ef0ec67d5cb5e5cb0cc7f8b744a35b389cc470"
+dependencies = [
+ "android_system_properties",
+ "core-foundation-sys",
+ "iana-time-zone-haiku",
+ "js-sys",
+ "log",
+ "wasm-bindgen",
+ "windows-core",
+]
+
+[[package]]
+name = "iana-time-zone-haiku"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f31827a206f56af32e590ba56d5d2d085f558508192593743f16b2306495269f"
+dependencies = [
+ "cc",
 ]
 
 [[package]]
@@ -1633,6 +1776,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "879f10e63c20629ecabbb64a8010319738c66a5cd0c29b02d63d272b03751d01"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "inout"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a580c13f0ffc335ef42dd3f6b1a41b726051c5e1656d9a3aa6fddb3c5dfbbf9"
+dependencies = [
+ "block-padding",
+ "hybrid-array",
 ]
 
 [[package]]
@@ -2002,9 +2155,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "nyx-accounts-service"
+version = "0.1.0"
+source = "git+https://github.com/design-nexus/nyx-accounts.git?rev=afdc1482cb910746f942556090870d3ec083dd34#afdc1482cb910746f942556090870d3ec083dd34"
+dependencies = [
+ "anyhow",
+ "futures-util",
+ "gio",
+ "glib",
+ "oauth2",
+ "reqwest",
+ "roxmltree",
+ "rusqlite",
+ "secret-service",
+ "serde",
+ "serde_json",
+ "tokio",
+ "url",
+ "uuid",
+ "zbus",
+ "zeroize",
+]
+
+[[package]]
 name = "nyx-actions"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-core.git?rev=94e0c8aa133074c74adb31365e51f56168114f68#94e0c8aa133074c74adb31365e51f56168114f68"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"
 dependencies = [
  "jsonschema",
  "serde",
@@ -2014,7 +2190,7 @@ dependencies = [
 [[package]]
 name = "nyx-ai-client"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-ai.git?rev=8adb41514963ab4216472f7d6e5aa8f84b7bfadf#8adb41514963ab4216472f7d6e5aa8f84b7bfadf"
+source = "git+https://github.com/design-nexus/nyx-ai.git?rev=277b9a5b11fead7850bc8ce68ddc57f08c09f983#277b9a5b11fead7850bc8ce68ddc57f08c09f983"
 dependencies = [
  "libc",
  "nyx-ai-proto",
@@ -2025,7 +2201,7 @@ dependencies = [
 [[package]]
 name = "nyx-ai-proto"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-ai.git?rev=8adb41514963ab4216472f7d6e5aa8f84b7bfadf#8adb41514963ab4216472f7d6e5aa8f84b7bfadf"
+source = "git+https://github.com/design-nexus/nyx-ai.git?rev=277b9a5b11fead7850bc8ce68ddc57f08c09f983#277b9a5b11fead7850bc8ce68ddc57f08c09f983"
 dependencies = [
  "serde",
  "serde_json",
@@ -2034,13 +2210,18 @@ dependencies = [
 [[package]]
 name = "nyx-cloud"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-cloud.git?rev=072cb06bf7a975e536b8fcdd2d19ec7a911e14d7#072cb06bf7a975e536b8fcdd2d19ec7a911e14d7"
+source = "git+https://github.com/design-nexus/nyx-cloud.git?rev=657627984e97ecc679f4a79d9a5511a735446476#657627984e97ecc679f4a79d9a5511a735446476"
 dependencies = [
  "anyhow",
+ "chrono",
+ "libc",
+ "nyx-accounts-service",
  "reqwest",
+ "secret-service",
  "serde",
  "serde_json",
  "tokio",
+ "url",
  "uuid",
  "zbus",
 ]
@@ -2048,7 +2229,7 @@ dependencies = [
 [[package]]
 name = "nyx-config"
 version = "0.1.0"
-source = "git+https://github.com/nyxos-project/nyx-system.git?rev=f68ecc891cd0d5a36b6ed29e93ed5ffc52e77acc#f68ecc891cd0d5a36b6ed29e93ed5ffc52e77acc"
+source = "git+https://github.com/nyxos-project/nyx-system.git?rev=3f3c454cdf34cfce571a5ff3802a25817e9301f9#3f3c454cdf34cfce571a5ff3802a25817e9301f9"
 dependencies = [
  "anyhow",
  "serde",
@@ -2058,7 +2239,7 @@ dependencies = [
 [[package]]
 name = "nyx-core"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-core.git?rev=94e0c8aa133074c74adb31365e51f56168114f68#94e0c8aa133074c74adb31365e51f56168114f68"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"
 dependencies = [
  "anyhow",
  "gtk4",
@@ -2072,7 +2253,7 @@ dependencies = [
 [[package]]
 name = "nyx-desktop"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-core.git?rev=94e0c8aa133074c74adb31365e51f56168114f68#94e0c8aa133074c74adb31365e51f56168114f68"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"
 dependencies = [
  "anyhow",
  "async-channel",
@@ -2121,12 +2302,12 @@ dependencies = [
 [[package]]
 name = "nyx-peer"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-core.git?rev=94e0c8aa133074c74adb31365e51f56168114f68#94e0c8aa133074c74adb31365e51f56168114f68"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"
 
 [[package]]
 name = "nyx-share-client"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-share.git?rev=3923640afdcbfe09fa4c1faaf7d952db071f3812#3923640afdcbfe09fa4c1faaf7d952db071f3812"
+source = "git+https://github.com/design-nexus/nyx-share.git?rev=9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b#9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b"
 dependencies = [
  "nyx-share-core",
  "nyx-share-dbus",
@@ -2138,7 +2319,7 @@ dependencies = [
 [[package]]
 name = "nyx-share-core"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-share.git?rev=3923640afdcbfe09fa4c1faaf7d952db071f3812#3923640afdcbfe09fa4c1faaf7d952db071f3812"
+source = "git+https://github.com/design-nexus/nyx-share.git?rev=9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b#9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b"
 dependencies = [
  "serde",
  "serde_json",
@@ -2147,7 +2328,7 @@ dependencies = [
 [[package]]
 name = "nyx-share-dbus"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-share.git?rev=3923640afdcbfe09fa4c1faaf7d952db071f3812#3923640afdcbfe09fa4c1faaf7d952db071f3812"
+source = "git+https://github.com/design-nexus/nyx-share.git?rev=9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b#9c0b1418af2296be13e2ec7c1de2e8e1c6a0341b"
 dependencies = [
  "nyx-share-core",
  "serde",
@@ -2167,7 +2348,7 @@ dependencies = [
 [[package]]
 name = "nyx-sync"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-core.git?rev=94e0c8aa133074c74adb31365e51f56168114f68#94e0c8aa133074c74adb31365e51f56168114f68"
+source = "git+https://github.com/design-nexus/nyx-core.git?rev=a258c315f056ac649586fdb55e98613056221411#a258c315f056ac649586fdb55e98613056221411"
 dependencies = [
  "age",
  "anyhow",
@@ -2181,7 +2362,7 @@ dependencies = [
 [[package]]
 name = "nyx-theme"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-design.git?rev=ea8839d237a23ec83887429475f0780c06a36826#ea8839d237a23ec83887429475f0780c06a36826"
+source = "git+https://github.com/design-nexus/nyx-design.git?rev=914b14ec5574ca04cbb985b571cfbfb0a42aae15#914b14ec5574ca04cbb985b571cfbfb0a42aae15"
 dependencies = [
  "gtk4",
  "nyx-core",
@@ -2192,7 +2373,7 @@ dependencies = [
 [[package]]
 name = "nyx-theme-core"
 version = "0.2.0"
-source = "git+https://github.com/design-nexus/nyx-design.git?rev=ea8839d237a23ec83887429475f0780c06a36826#ea8839d237a23ec83887429475f0780c06a36826"
+source = "git+https://github.com/design-nexus/nyx-design.git?rev=914b14ec5574ca04cbb985b571cfbfb0a42aae15#914b14ec5574ca04cbb985b571cfbfb0a42aae15"
 dependencies = [
  "nyx-config",
  "nyx-core",
@@ -2204,7 +2385,7 @@ dependencies = [
 [[package]]
 name = "nyx-ui"
 version = "0.1.0"
-source = "git+https://github.com/design-nexus/nyx-design.git?rev=ea8839d237a23ec83887429475f0780c06a36826#ea8839d237a23ec83887429475f0780c06a36826"
+source = "git+https://github.com/design-nexus/nyx-design.git?rev=914b14ec5574ca04cbb985b571cfbfb0a42aae15#914b14ec5574ca04cbb985b571cfbfb0a42aae15"
 dependencies = [
  "gtk4",
  "nyx-core",
@@ -2213,6 +2394,26 @@ dependencies = [
  "nyx-theme",
  "serde_json",
  "toml 1.1.8+spec-1.1.0",
+]
+
+[[package]]
+name = "oauth2"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "51e219e79014df21a225b1860a479e2dcd7cbd9130f4defd4bd0e191ea31d67d"
+dependencies = [
+ "base64 0.21.7",
+ "chrono",
+ "getrandom 0.2.17",
+ "http",
+ "rand 0.8.8",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "serde_path_to_error",
+ "sha2 0.10.9",
+ "thiserror 1.0.69",
+ "url",
 ]
 
 [[package]]
@@ -2226,6 +2427,12 @@ name = "opaque-debug"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08d65885ee38876c4f86fa503fb49d7b507c2b62552df7c70b2fce627e06381"
+
+[[package]]
+name = "openssl-probe"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e036b411754132fd6b74e94b74e9a13c5cf606fa93d1885c35860d3060820b1"
 
 [[package]]
 name = "ordered-float"
@@ -2342,7 +2549,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f8ed6a7761f76e3b9f92dfb0a60a6a6477c61024b775147ff0973a02653abaf2"
 dependencies = [
  "digest 0.10.7",
- "hmac",
+ "hmac 0.12.1",
 ]
 
 [[package]]
@@ -2728,6 +2935,7 @@ dependencies = [
  "pin-project-lite",
  "quinn",
  "rustls",
+ "rustls-native-certs",
  "rustls-pki-types",
  "serde",
  "serde_json",
@@ -2877,6 +3085,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustls-native-certs"
+version = "0.8.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a073f5dc7469f984c52ad2752b63b0807745133b6de880b7b64c1ac4c48aec4"
+dependencies = [
+ "openssl-probe",
+ "rustls-pki-types",
+ "schannel",
+ "security-framework",
+]
+
+[[package]]
 name = "rustls-pki-types"
 version = "1.15.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2915,7 +3135,7 @@ version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "97a22f5af31f73a954c10289c93e8a50cc23d971e80ee446f1f6f7137a088213"
 dependencies = [
- "cipher",
+ "cipher 0.4.4",
 ]
 
 [[package]]
@@ -2950,6 +3170,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "schannel"
+version = "0.1.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9cb23c424d8ee841bb4d813677ca237e2a610067d594fec130f87d6093495ab5"
+dependencies = [
+ "windows-sys 0.61.2",
+]
+
+[[package]]
 name = "scopeguard"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2973,6 +3202,48 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e891af845473308773346dc847b2c23ee78fe442e0472ac50e22a18a93d3ae5a"
 dependencies = [
  "zeroize",
+]
+
+[[package]]
+name = "secret-service"
+version = "5.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5107b24b91445dd2aa449a258a1807b63240942157292354dc5bfdbeb8bc6db8"
+dependencies = [
+ "aes",
+ "cbc",
+ "futures-util",
+ "getrandom 0.4.3",
+ "hkdf 0.13.0",
+ "hybrid-array",
+ "num",
+ "once_cell",
+ "serde",
+ "sha2 0.11.1",
+ "zbus",
+]
+
+[[package]]
+name = "security-framework"
+version = "3.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
+dependencies = [
+ "bitflags",
+ "core-foundation",
+ "core-foundation-sys",
+ "libc",
+ "security-framework-sys",
+]
+
+[[package]]
+name = "security-framework-sys"
+version = "2.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ce2691df843ecc5d231c0b14ece2acc3efb62c0a398c7e1d875f3983ce020e3"
+dependencies = [
+ "core-foundation-sys",
+ "libc",
 ]
 
 [[package]]
@@ -3037,6 +3308,17 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "serde_path_to_error"
+version = "0.1.20"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10a9ff822e371bb5403e391ecd83e182e0e77ba7f6fe0160b795797109d1b457"
+dependencies = [
+ "itoa",
+ "serde",
+ "serde_core",
 ]
 
 [[package]]
@@ -3388,6 +3670,7 @@ dependencies = [
  "signal-hook-registry",
  "socket2",
  "tokio-macros",
+ "tracing",
  "windows-sys 0.61.2",
 ]
 
@@ -3643,6 +3926,7 @@ dependencies = [
  "idna",
  "percent-encoding",
  "serde",
+ "serde_derive",
 ]
 
 [[package]]
@@ -3920,10 +4204,63 @@ dependencies = [
 ]
 
 [[package]]
+name = "windows-core"
+version = "0.62.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8e83a14d34d0623b51dce9581199302a221863196a1dde71a7663a4c2be9deb"
+dependencies = [
+ "windows-implement",
+ "windows-interface",
+ "windows-link",
+ "windows-result",
+ "windows-strings",
+]
+
+[[package]]
+name = "windows-implement"
+version = "0.60.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "053e2e040ab57b9dc951b72c264860db7eb3b0200ba345b4e4c3b14f67855ddf"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
+name = "windows-interface"
+version = "0.59.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3f316c4a2570ba26bbec722032c4099d8c8bc095efccdc15688708623367e358"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
 name = "windows-link"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+
+[[package]]
+name = "windows-result"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7781fa89eaf60850ac3d2da7af8e5242a5ea78d1a11c49bf2910bb5a73853eb5"
+dependencies = [
+ "windows-link",
+]
+
+[[package]]
+name = "windows-strings"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7837d08f69c77cf6b07689544538e017c1bfcf57e34b4c0ff58e6c2cd3b37091"
+dependencies = [
+ "windows-link",
+]
 
 [[package]]
 name = "windows-sys"
@@ -4088,6 +4425,7 @@ dependencies = [
  "rustix",
  "serde",
  "serde_repr",
+ "tokio",
  "tracing",
  "uds_windows",
  "uuid",
