@@ -355,43 +355,6 @@ fn main() {
         let _ = io::stdout().flush();
     }
 }
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn conflict_retains_draft_and_rejects_escape() {
-        let temp = tempfile::tempdir().unwrap();
-        let root = temp.path().join("vault");
-        std::fs::create_dir(&root).unwrap();
-        let p = root.join("note.md");
-        vault::save_copy(&p, "original", false).unwrap();
-        let mut panel = Panel {
-            root: root.clone(),
-            db: temp.path().join("index.sqlite"),
-            state: temp.path().join("state"),
-            prefs: toml::Value::Table(Default::default()),
-            doc: None,
-        };
-        panel.call(&json!({"op":"read","path":"note.md"})).unwrap();
-        std::fs::write(&p, "external").unwrap();
-        assert!(
-            panel
-                .call(&json!({"op":"save","path":"note.md","text":"mine"}))
-                .is_err()
-        );
-        assert_eq!(std::fs::read_to_string(&p).unwrap(), "external");
-        assert_eq!(
-            vault::read_draft(&panel.recovery(), &p)
-                .unwrap()
-                .unwrap()
-                .text,
-            "mine"
-        );
-        assert!(panel.checked("../outside.md").is_err());
-        assert!(panel.checked(".obsidian/settings.md").is_err());
-    }
-}
-
 fn toggle_existing(data: &std::path::Path) -> bool {
     let quiet = |program: &str, args: Vec<String>| {
         std::process::Command::new(program)
@@ -435,4 +398,41 @@ fn toggle_existing(data: &std::path::Path) -> bool {
         }
     }
     false
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn conflict_retains_draft_and_rejects_escape() {
+        let temp = tempfile::tempdir().unwrap();
+        let root = temp.path().join("vault");
+        std::fs::create_dir(&root).unwrap();
+        let p = root.join("note.md");
+        vault::save_copy(&p, "original", false).unwrap();
+        let mut panel = Panel {
+            root: root.clone(),
+            db: temp.path().join("index.sqlite"),
+            state: temp.path().join("state"),
+            prefs: toml::Value::Table(Default::default()),
+            doc: None,
+        };
+        panel.call(&json!({"op":"read","path":"note.md"})).unwrap();
+        std::fs::write(&p, "external").unwrap();
+        assert!(
+            panel
+                .call(&json!({"op":"save","path":"note.md","text":"mine"}))
+                .is_err()
+        );
+        assert_eq!(std::fs::read_to_string(&p).unwrap(), "external");
+        assert_eq!(
+            vault::read_draft(&panel.recovery(), &p)
+                .unwrap()
+                .unwrap()
+                .text,
+            "mine"
+        );
+        assert!(panel.checked("../outside.md").is_err());
+        assert!(panel.checked(".obsidian/settings.md").is_err());
+    }
 }
